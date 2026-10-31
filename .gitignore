@@ -1,0 +1,9 @@
+# The bundled fonts are downloaded (Resources/Fonts/fetch_fonts.sh), not kept in the repository
+Resources/Fonts/*.otf
+Resources/Fonts/*.ttf
+# Packs, builds, IDE state
+*.mfp
+Builds - */
+*.debug.app
+*.xojo_uistate
+.DS_Store
