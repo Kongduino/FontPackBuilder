@@ -15,7 +15,7 @@ Begin DesktopWindow GlyphEditor
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
-   MaximumWidth    =   32000
+   MaximumWidth    =   640
    MenuBar         =   ""
    MenuBarVisible  =   False
    MinimumHeight   =   480
@@ -716,4 +716,3 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-

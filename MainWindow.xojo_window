@@ -15,7 +15,7 @@ Begin DesktopWindow MainWindow
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
-   MaximumWidth    =   32000
+   MaximumWidth    =   900
    MenuBar         =   2013911039
    MenuBarVisible  =   False
    MinimumHeight   =   640
@@ -217,12 +217,12 @@ Begin DesktopWindow MainWindow
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   390
+      Height          =   435
       Index           =   -2147483648
       InitialValue    =   "checkbox	range	block name"
       Italic          =   False
       Left            =   425
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
@@ -302,11 +302,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   425
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
@@ -318,7 +318,7 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   486
+      Top             =   531
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -413,11 +413,11 @@ Begin DesktopWindow MainWindow
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   0
       TabIndex        =   10
@@ -444,11 +444,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   112
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   0
       TabIndex        =   11
@@ -471,11 +471,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   244
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       MaximumValue    =   100
       PanelIndex      =   0
       Scope           =   0
@@ -503,11 +503,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Multiline       =   False
       Scope           =   0
       Selectable      =   False
@@ -575,7 +575,7 @@ Begin DesktopWindow MainWindow
       Height          =   126
       Index           =   -2147483648
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
@@ -608,11 +608,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   425
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
@@ -624,7 +624,7 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   520
+      Top             =   565
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -645,18 +645,18 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   581
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   0
       TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   520
+      Top             =   565
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -673,11 +673,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   425
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Multiline       =   False
       Scope           =   0
       Selectable      =   False
@@ -688,11 +688,42 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   555
+      Top             =   600
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   455
+   End
+   Begin DesktopButton btnUploadWindow
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Upload…"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   28
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      MacButtonStyle  =   0
+      Scope           =   0
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   565
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
    End
 End
 #tag EndDesktopWindow
@@ -789,38 +820,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ParseEditChar(text As String) As Integer
-		  // The code point to edit: "U+55BA", "55BA" (4 to 6 hex digits), or a character. -1 when empty
-		  Dim t As String = text.Trim
-		  If t = "" Then Return -1
-		  Dim u As String = t.Uppercase
-		  If u.Left(2) = "U+" Then u = u.Middle(2)
-		  Dim allowed As String = "0123456789ABCDEF"
-		  Dim isHex As Boolean = u.Length >= 4 And u.Length <= 6
-		  If isHex Then
-		    For Each c As String In u.Characters
-		      If allowed.IndexOf(c) < 0 Then
-		        isHex = False
-		        Exit
-		      End If
-		    Next
-		  End If
-		  If isHex Then Return Integer.FromHex(u)
-		  Return t.Left(1).Asc
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateEdits()
-		  If mEdits.KeyCount = 0 Then
-		    lblEdits.Text = "No edited glyphs"
-		  Else
-		    lblEdits.Text = Str(mEdits.KeyCount) + If(mEdits.KeyCount = 1, " edited glyph", " edited glyphs")
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Function Hex4(cp As Integer) As String
 		  Dim h As String = Hex(cp)
 		  While h.Length < 4
@@ -863,11 +862,10 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub SavePack(pack As RenderedPack, f As FolderItem)
-		  // Writes a pack: the metadata as mkfontpack.py writes it (name, font, size, licence, source, creation, sets)
-		  Dim packName As String = f.Name
-		  If packName.Right(4) = ".mfp" Then packName = packName.Left(packName.Length - 4)
+	#tag Method, Flags = &h0
+		Function PackBytes(pack As RenderedPack, packName As String) As MemoryBlock
+		  // A pack as a file: the metadata as mkfontpack.py writes it (name, font, size, licence, source, creation, sets).
+		  // Nil when the glyphs don't fit the format
 		  Dim sets() As String
 		  For row As Integer = 0 To lbSets.RowCount - 1
 		    If lbSets.CellCheckBoxValueAt(row, 0) Then sets.Add(CharSets.SetName(lbSets.RowTagAt(row)))
@@ -883,8 +881,45 @@ End
 		  lines.Add("source=" + pack.Source)
 		  lines.Add("created=" + created)
 		  If sets.Count > 0 Then lines.Add("sets=" + String.FromArray(sets, ","))
-		  
-		  Dim m As MemoryBlock = MFPWriter.Build(pack.Glyphs, pack.LineHeight, pack.Baseline, String.FromArray(lines, Chr(10)))
+		  Return MFPWriter.Build(pack.Glyphs, pack.LineHeight, pack.Baseline, String.FromArray(lines, Chr(10)))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ParseEditChar(text As String) As Integer
+		  // The code point to edit: "U+55BA", "55BA" (4 to 6 hex digits), or a character. -1 when empty
+		  Dim t As String = text.Trim
+		  If t = "" Then Return -1
+		  Dim u As String = t.Uppercase
+		  If u.Left(2) = "U+" Then u = u.Middle(2)
+		  Dim allowed As String = "0123456789ABCDEF"
+		  Dim isHex As Boolean = u.Length >= 4 And u.Length <= 6
+		  If isHex Then
+		    For Each c As String In u.Characters
+		      If allowed.IndexOf(c) < 0 Then
+		        isHex = False
+		        Exit
+		      End If
+		    Next
+		  End If
+		  If isHex Then Return Integer.FromHex(u)
+		  Return t.Left(1).Asc
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RenderedPacks() As RenderedPack()
+		  // The packs rendered (with the edits), for the upload window
+		  Return mPacks
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SavePack(pack As RenderedPack, f As FolderItem)
+		  // Writes a pack, named after its file
+		  Dim packName As String = f.Name
+		  If packName.Right(4) = ".mfp" Then packName = packName.Left(packName.Length - 4)
+		  Dim m As MemoryBlock = PackBytes(pack, packName)
 		  If m = Nil Then
 		    lblStatus.Text = f.Name + ": the glyphs don't fit the pack format"
 		    Return
@@ -924,6 +959,16 @@ End
 		  Next
 		  Return out
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateEdits()
+		  If mEdits.KeyCount = 0 Then
+		    lblEdits.Text = "No edited glyphs"
+		  Else
+		    lblEdits.Text = Str(mEdits.KeyCount) + If(mEdits.KeyCount = 1, " edited glyph", " edited glyphs")
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1332,6 +1377,17 @@ End
 		  End If
 		  Dim w As New GlyphEditor
 		  w.EditGlyph(Self, current, pack.Original(cp), pack.SizePx, pack.LineHeight, pack.Baseline)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnUploadWindow
+	#tag Event
+		Sub Pressed()
+		  If mPacks.Count = 0 Then
+		    lblStatus.Text = "Render first (or choose a pack file in the upload window)"
+		  End If
+		  Dim w As New UploadWindow
+		  w.ShowFor(Self)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

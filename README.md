@@ -11,6 +11,9 @@ side and command-line tools are in [MeshtasticFontPacks](https://github.com/Kong
 - **Glyph editor:** any glyph magnified, with its line box, baseline, pen and advance: draw, move, change the advance,
   revert to the font's. A character the font doesn't have can be drawn from scratch. Edits are kept across renders.
 - **Packs** are written in format version 2, the same bytes as `mkfontpack.py` for the same font and characters.
+- **Upload:** a rendered pack or a pack file goes to a device over USB serial or TCP (the firmware's XModem transfer),
+  to `/fonts/<name>.mfp`; the device checks it before installing it. When there's no room beside the old pack, the app
+  offers to remove that one first. **Remove All Packs** removes every pack from the device (files and flash slots).
 
 Glyphs are drawn with CoreText, anti-aliasing and font smoothing off, which matches FreeType's mono rendering (the
 Python generator's) pixel for pixel, but for a few accents that rise above the ascender line.
@@ -27,8 +30,7 @@ characters; `Resources/Blocks.txt` is the Unicode Character Database's block lis
 
 ## Next
 
-Uploading packs to a device (serial or TCP, through the MQTT_Xojo library), project files (font, selection, edits),
-compressed transfers, Windows and Linux.
+Project files (font, selection, edits), compressed transfers, Windows and Linux.
 
 ## Licence
 
