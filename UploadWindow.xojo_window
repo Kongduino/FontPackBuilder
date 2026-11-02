@@ -422,20 +422,44 @@ End
 		    pmPort.RowTagAt(pmPort.LastAddedRowIndex) = d
 		    If preferred < 0 And (d.Name.IndexOf("usbmodem") >= 0 Or d.Name.IndexOf("usbserial") >= 0) Then preferred = pmPort.LastAddedRowIndex
 		  Next
-		  pmPort.AddRow(kNetwork)
+		  pmPort.AddRow(T("upload.network")) // its tag stays Nil
 		  pmPort.SelectedRowIndex = If(preferred >= 0, preferred, 0)
 		  pbUpload.MaximumValue = 1000
 		  pbUpload.Value = 0
 		  taLog.ReadOnly = True
-		  UpdateControls
+		  ApplyLanguage
 		End Sub
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Sub ApplyLanguage()
+		  // The window's texts in the current language (Strings): at opening, and when the user chooses another one
+		  Self.Title = T("upload.title")
+		  tfHost.Hint = T("upload.hint.host")
+		  btnClose.Caption = T("upload.close")
+		  btnRemoveAll.Caption = T("upload.removeAll")
+		  // The menus' own rows: Network (TCP)..., the rendered packs, Pack file...; a port or a file keeps its name
+		  For row As Integer = 0 To pmPort.RowCount - 1
+		    If pmPort.RowTagAt(row) = Nil Then Relabel(pmPort, row, T("upload.network"))
+		  Next
+		  For row As Integer = 0 To pmPack.RowCount - 1
+		    Dim tag As Variant = pmPack.RowTagAt(row)
+		    If tag = Nil Then
+		      Relabel(pmPack, row, T("upload.packFile"))
+		    ElseIf tag IsA RenderedPack Then
+		      Dim rp As RenderedPack = tag
+		      Relabel(pmPack, row, RenderedPackText(rp))
+		    End If
+		  Next
+		  UpdateControls
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub LinkClosed(sender As MeshDeviceLink, reason As String)
 		  #Pragma Unused sender
-		  Log("Disconnected" + If(reason <> "", ": " + reason, ""))
+		  Log(If(reason <> "", T("upload.log.disconnectedReason", "reason", reason), T("upload.log.disconnected")))
 		  If mUploader <> Nil And mUploader.IsBusy Then mUploader.Cancel
 		  mConnected = False
 		  lblDevice.Text = ""
@@ -446,10 +470,10 @@ End
 	#tag Method, Flags = &h21
 		Private Sub LinkConfigComplete(sender As MeshDeviceLink)
 		  lblDevice.Text = sender.LongName + "  (" + sender.MyNodeID + ")"
-		  Log("Connected to " + lblDevice.Text)
+		  Log(T("upload.log.connected", "device", lblDevice.Text))
 		  mConnected = True
 		  Dim packs() As String = PackFiles
-		  If packs.Count > 0 Then Log("Packs in its filesystem: " + String.FromArray(packs, ", "))
+		  If packs.Count > 0 Then Log(T("upload.log.packsOnDevice", "packs", String.FromArray(packs, ", ")))
 		  UpdateControls
 		End Sub
 	#tag EndMethod
@@ -482,10 +506,31 @@ End
 		    Dim path As String = mLink.FileNameAt(i)
 		    If path.IndexOf("fonts/") >= 0 And path.Right(4) = ".mfp" Then
 		      Dim name As String = path.NthField("/", path.CountFields("/"))
-		      packs.Add(name + " (" + Format(mLink.FileSizeAt(i), "#,##0") + " bytes)")
+		      packs.Add(T("upload.packSize", "name", name, "bytes", Format(mLink.FileSizeAt(i), "#,##0")))
 		    End If
 		  Next
 		  Return packs
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Relabel(pm As DesktopPopupMenu, row As Integer, text As String)
+		  // A popup row's text can't be changed in place: the row is removed and added again, with its tag and the
+		  // selection, without the selection's side effects (mRelabeling)
+		  Dim tag As Variant = pm.RowTagAt(row)
+		  Dim selected As Integer = pm.SelectedRowIndex
+		  mRelabeling = True
+		  pm.RemoveRowAt(row)
+		  pm.AddRowAt(row, text)
+		  pm.RowTagAt(row) = tag
+		  pm.SelectedRowIndex = selected
+		  mRelabeling = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function RenderedPackText(p As RenderedPack) As String
+		  Return T("upload.renderedPack", "size", Str(p.SizePx), "glyphs", Format(p.Glyphs.Count, "#,##0"))
 		End Function
 	#tag EndMethod
 
@@ -494,7 +539,7 @@ End
 		  #Pragma Unused sender
 		  // The old pack is removed: the new one again
 		  If Not mConnected Then Return
-		  Log("Sending " + mLastTarget + " again")
+		  Log(T("upload.log.sendingAgain", "target", mLastTarget))
 		  mRetriedAfterRemove = True
 		  mUploader.Start(mLastData, mLastTarget)
 		  UpdateControls
@@ -507,10 +552,10 @@ End
 		  mOwner = owner
 		  pmPack.RemoveAllRows
 		  For Each p As RenderedPack In owner.RenderedPacks
-		    pmPack.AddRow(Str(p.SizePx) + " px, " + Format(p.Glyphs.Count, "#,##0") + " glyphs (rendered)")
+		    pmPack.AddRow(RenderedPackText(p))
 		    pmPack.RowTagAt(pmPack.LastAddedRowIndex) = p
 		  Next
-		  pmPack.AddRow(kPackFile)
+		  pmPack.AddRow(T("upload.packFile")) // its tag stays Nil
 		  If pmPack.RowCount > 1 Then pmPack.SelectedRowIndex = 0
 		  Self.Show
 		End Sub
@@ -523,9 +568,9 @@ End
 		  Dim open As Boolean = mLink <> Nil And mLink.IsOpen
 		  tfHost.Enabled = tcp And Not open
 		  pmPort.Enabled = Not open
-		  btnConnect.Caption = If(open, "Disconnect", "Connect")
+		  btnConnect.Caption = If(open, T("upload.disconnect"), T("upload.connect"))
 		  btnConnect.Enabled = Not busy
-		  btnUpload.Caption = If(busy, "Cancel", "Upload")
+		  btnUpload.Caption = If(busy, T("button.cancel"), T("upload.upload"))
 		  btnUpload.Enabled = mConnected
 		  pmPack.Enabled = Not busy
 		  tfTargetName.Enabled = Not busy
@@ -535,19 +580,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UploaderFinished(sender As PackUploader, ok As Boolean, message As String)
-		  Log(If(ok, "", "Failed: ") + message)
+		  Log(If(ok, message, T("upload.log.failed", "message", message)))
 		  If Not ok Then pbUpload.Value = 0
 		  UpdateControls
 		  // No room beside the old pack (a small filesystem): offer to remove it, then send the new one
 		  If ok Or Not sender.StoppedByDevice Or mRetriedAfterRemove Then Return
 		  Dim d As New MessageDialog
-		  d.Message = "There isn't room for the new pack beside the old one."
-		  d.Explanation = "Remove /fonts/" + mLastTarget + " from the device and send the new one? Until it arrives, the device has no pack of that name."
-		  d.ActionButton.Caption = "Remove and Send"
+		  d.Message = T("upload.noRoom.message")
+		  d.Explanation = T("upload.noRoom.explanation", "path", "/fonts/" + mLastTarget)
+		  d.ActionButton.Caption = T("upload.noRoom.action")
 		  d.CancelButton.Visible = True
+		  d.CancelButton.Caption = T("button.cancel")
 		  If d.ShowModal(Self) <> d.ActionButton Then Return
 		  Call mLink.DeleteFile("/fonts/" + mLastTarget)
-		  Log("Asked the device to remove /fonts/" + mLastTarget)
+		  Log(T("upload.log.askedRemove", "path", "/fonts/" + mLastTarget))
 		  If mRetryTimer = Nil Then
 		    mRetryTimer = New Timer
 		    AddHandler mRetryTimer.Action, WeakAddressOf RetryAction
@@ -594,6 +640,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRelabeling As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mRetriedAfterRemove As Boolean
 	#tag EndProperty
 
@@ -606,11 +656,6 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = kNetwork, Type = String, Dynamic = False, Default = \"Network (TCP)...", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = kPackFile, Type = String, Dynamic = False, Default = \"Pack file...", Scope = Private
-	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -619,6 +664,7 @@ End
 	#tag Event
 		Sub SelectionChanged(item As DesktopMenuItem)
 		  #Pragma Unused item
+		  If mRelabeling Then Return
 		  UpdateControls
 		End Sub
 	#tag EndEvent
@@ -630,7 +676,7 @@ End
 		    mLink.Close
 		    mConnected = False
 		    lblDevice.Text = ""
-		    Log("Disconnected")
+		    Log(T("upload.log.disconnected"))
 		    UpdateControls
 		    Return
 		  End If
@@ -650,7 +696,7 @@ End
 		  Else
 		    Dim host As String = tfHost.Text.Trim
 		    If host = "" Then
-		      Log("Type the device's IP address")
+		      Log(T("upload.log.typeHost"))
 		      Return
 		    End If
 		    mLink.ConnectTCP(host)
@@ -663,6 +709,7 @@ End
 	#tag Event
 		Sub SelectionChanged(item As DesktopMenuItem)
 		  #Pragma Unused item
+		  If mRelabeling Then Return
 		  Dim row As Integer = pmPack.SelectedRowIndex
 		  If row < 0 Then Return
 		  Dim tag As Variant = pmPack.RowTagAt(row)
@@ -683,7 +730,7 @@ End
 		  End If
 		  // Pack file...: added above it, then selected
 		  Dim mfp As New FileType
-		  mfp.Name = "Meshtastic Font Pack"
+		  mfp.Name = T("main.fileType.pack")
 		  mfp.Extensions = "mfp"
 		  Dim f As FolderItem = FolderItem.ShowOpenFileDialog(mfp)
 		  If f = Nil Then
@@ -709,12 +756,12 @@ End
 		  If Not mConnected Then Return
 		  Dim row As Integer = pmPack.SelectedRowIndex
 		  If row < 0 Then
-		    Log("Choose a pack")
+		    Log(T("upload.log.choosePack"))
 		    Return
 		  End If
 		  Dim target As String = tfTargetName.Text.Trim
 		  If target.Right(4) <> ".mfp" Or target.IndexOf("/") >= 0 Or target.Length < 5 Then
-		    Log("The name on the device must be a plain file name ending in .mfp")
+		    Log(T("upload.log.badName"))
 		    Return
 		  End If
 		  // The pack's bytes: rendered (with the edits) or from a file
@@ -724,7 +771,7 @@ End
 		    Dim rp As RenderedPack = tag
 		    Dim m As MemoryBlock = mOwner.PackBytes(rp, target.Left(target.Length - 4))
 		    If m = Nil Then
-		      Log("The glyphs don't fit the pack format")
+		      Log(T("upload.log.notFit"))
 		      Return
 		    End If
 		    data = m.StringValue(0, m.Size)
@@ -735,7 +782,7 @@ End
 		      data = b.Read(b.Length)
 		      b.Close
 		    Catch e As IOException
-		      Log("Can't read the pack file: " + e.Message)
+		      Log(T("upload.log.cantRead", "error", e.Message))
 		      Return
 		    End Try
 		  Else
@@ -743,10 +790,10 @@ End
 		  End If
 		  Dim head As MemoryBlock = data
 		  If data.Bytes < 80 Or data.LeftBytes(4) <> "MFPK" Or head.UInt16Value(4) <> 2 Then
-		    Log("Not a font pack of format version 2")
+		    Log(T("upload.log.notPack"))
 		    Return
 		  End If
-		  Log("Sending " + target + " (" + Format(data.Bytes, "#,##0") + " bytes)")
+		  Log(T("upload.log.sending", "target", target, "bytes", Format(data.Bytes, "#,##0")))
 		  mLastData = data
 		  mLastTarget = target
 		  mRetriedAfterRemove = False
@@ -769,21 +816,22 @@ End
 		  If Not mConnected Or (mUploader <> Nil And mUploader.IsBusy) Then Return
 		  Dim packs() As String = PackFiles
 		  Dim d As New MessageDialog
-		  d.Message = "Remove all the font packs from the device?"
+		  d.Message = T("upload.removeAll.message")
 		  If packs.Count > 0 Then
-		    d.Explanation = "When you connected, its filesystem had " + String.FromArray(packs, ", ") + ". "
+		    d.Explanation = T("upload.removeAll.hadPacks", "packs", String.FromArray(packs, ", ")) + " "
 		  Else
-		    d.Explanation = "When you connected, its filesystem had no pack. "
+		    d.Explanation = T("upload.removeAll.hadNone") + " "
 		  End If
-		  d.Explanation = d.Explanation + "Packs kept in a flash slot are removed too. Until a pack is installed again, the characters they drew show as boxes."
-		  d.ActionButton.Caption = "Remove All"
+		  d.Explanation = d.Explanation + T("upload.removeAll.slots")
+		  d.ActionButton.Caption = T("upload.removeAll.action")
 		  d.CancelButton.Visible = True
+		  d.CancelButton.Caption = T("button.cancel")
 		  If d.ShowModal(Self) <> d.ActionButton Then Return
 		  If mLink.DeleteFile("/fonts") = 0 Then
-		    Log("Not connected")
+		    Log(T("upload.log.notConnected"))
 		    Return
 		  End If
-		  Log("Asked the device to remove all its font packs")
+		  Log(T("upload.log.askedRemoveAll"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -22,7 +22,7 @@ Protected Class PackUploader
 		  // Stops the transfer: the device discards what it received
 		  If mStage = kStageIdle Then Return
 		  mLink.SendXModem(kCAN, 0)
-		  Finish(False, "Cancelled")
+		  Finish(False, T("transfer.cancelled"))
 		End Sub
 	#tag EndMethod
 
@@ -72,14 +72,14 @@ Protected Class PackUploader
 		      mSeq = 1
 		      Send
 		    Else
-		      Fail("The device refused " + mTarget)
+		      Fail(T("transfer.refused", "target", mTarget))
 		    End If
 		  Case kStageData
 		    If control = kACK Then
 		      Advance
 		    ElseIf control = kCAN Then
 		      StoppedByDevice = True
-		      Fail("The device stopped the transfer (its log says why). If the pack doesn't fit, remove one first")
+		      Fail(T("transfer.stopped"))
 		    ElseIf control = kNAK And mTimedOut Then
 		      // A NAK for a packet resent after a timeout: the device already had it (the sequence no longer matches),
 		      // and its acknowledgement was lost on the way back
@@ -91,12 +91,12 @@ Protected Class PackUploader
 		  Case kStageEnd
 		    Dim seconds As Double = (System.Microseconds - mStarted) / 1000000
 		    If control = kACK Then
-		      Finish(True, mTarget + ": " + Format(mData.Bytes, "#,##0") + " bytes in " + Format(seconds, "0") + " s, installed" + _
-		      If(mLostAcks > 0, " (" + Str(mLostAcks) + " lost acknowledgements recovered)", ""))
+		      Finish(True, T(If(mLostAcks > 0, "transfer.doneRecovered", "transfer.done"), "target", mTarget, _
+		      "bytes", Format(mData.Bytes, "#,##0"), "seconds", Format(seconds, "0"), "lost", Str(mLostAcks)))
 		    ElseIf control = kNAK Then
-		      Fail("The device checked the pack and refused it: nothing changed on the device")
+		      Fail(T("transfer.checkRefused"))
 		    Else
-		      Fail("The end of the transfer wasn't acknowledged")
+		      Fail(T("transfer.endNotAcked"))
 		    End If
 		  End Select
 		End Sub
@@ -107,7 +107,7 @@ Protected Class PackUploader
 		  mRetries = mRetries + 1
 		  If mRetries >= kRetries Then
 		    mLink.SendXModem(kCAN, 0)
-		    Fail("Packet " + Str(mSeq) + " not acknowledged: transfer cancelled")
+		    Fail(T("transfer.packetNotAcked", "seq", Str(mSeq)))
 		    Return
 		  End If
 		  Send
@@ -160,9 +160,9 @@ Protected Class PackUploader
 		    mTimedOut = True
 		    Retry
 		  Case kStageStart
-		    Fail("No answer from the device: is it connected, and does its firmware take font packs?")
+		    Fail(T("transfer.noAnswer"))
 		  Case kStageEnd
-		    Fail("No answer at the end of the transfer")
+		    Fail(T("transfer.noAnswerEnd"))
 		  End Select
 		End Sub
 	#tag EndMethod

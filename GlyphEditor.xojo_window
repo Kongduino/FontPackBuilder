@@ -391,6 +391,18 @@ End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Method, Flags = &h0
+		Sub ApplyLanguage()
+		  // The buttons in the current language (Strings)
+		  btnNarrower.Caption = T("glyph.narrower")
+		  btnWider.Caption = T("glyph.wider")
+		  btnClear.Caption = T("glyph.clear")
+		  btnRevert.Caption = T("glyph.revert")
+		  btnCancel.Caption = T("button.cancel")
+		  btnOK.Caption = T("button.ok")
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function CellAt(x As Integer, y As Integer, ByRef cx As Integer, ByRef cy As Integer) As Boolean
 		  // The grid cell under a point of cvEdit
@@ -419,6 +431,7 @@ End
 		  mCodePoint = current.CodePoint
 		  Load(current)
 		  Self.Title = Chr(mCodePoint) + "   U+" + Hex4(mCodePoint) + "   " + Str(sizePx) + " px"
+		  ApplyLanguage
 		  Self.ShowModal(owner)
 		End Sub
 	#tag EndMethod

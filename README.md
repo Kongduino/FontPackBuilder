@@ -28,6 +28,20 @@ Python generator's) pixel for pixel, but for a few accents that rise above the a
 `Resources/CharSets.txt` comes from MeshtasticFontPacks (`tools/export_sets.py`), so both tools select the same
 characters; `Resources/Blocks.txt` is the Unicode Character Database's block list.
 
+## Languages
+
+The interface is in English, 繁體中文 or 한국어, chosen in the **Language** menu; the choice applies to every open
+window at once and is remembered. By default the app uses the system language when there's a file for it. The
+Korean texts still need a review by a native speaker.
+
+Each language is a JSON file in `Resources/Languages` (`en.json`, `zh-Hant.json`, `ko.json`): `"_language"` is its
+name in its own script, then one `"key": "text"` per text, with `{placeholders}` the app fills in
+(`"status.saved": "Saved {file}: {glyphs} glyphs, {bytes} bytes"`). A text a file doesn't have is shown in English.
+To add or try a language without rebuilding the app, put its file in
+`~/Library/Application Support/FontPackBuilder/Languages`; a file there replaces a built-in one of the same name.
+`tools/check_strings.py` checks the keys the code uses against `en.json`, and each translation against `en.json`
+(missing or extra keys, placeholders that differ).
+
 ## Next
 
 Project files (font, selection, edits), compressed transfers, Windows and Linux.

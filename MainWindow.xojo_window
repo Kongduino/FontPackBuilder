@@ -174,7 +174,7 @@ Begin DesktopWindow MainWindow
       InitialValue    =   "checkbox	name	count"
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
@@ -261,11 +261,11 @@ Begin DesktopWindow MainWindow
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
@@ -336,11 +336,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Multiline       =   False
       Scope           =   0
       Selectable      =   False
@@ -375,11 +375,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
@@ -542,11 +542,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
@@ -579,13 +579,13 @@ Begin DesktopWindow MainWindow
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   0
       TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   430
+      Top             =   427
       Transparent     =   False
       Visible         =   True
       Width           =   393
@@ -737,17 +737,15 @@ End
 		  mEdits = New Dictionary
 		  
 		  pmFont.RemoveAllRows
-		  AddFontRow("GNU Unifont, 16 px (bundled)", "unifont-18.0.01.otf", _
+		  AddFontRow("main.font.unifont", "unifont-18.0.01.otf", _
 		  "OFL-1.1 OR GPL-2.0-or-later WITH Font-exception-2.0", "GNU Unifont 18.0.01", 16)
-		  AddFontRow("Fusion Pixel, 12 px, Hong Kong forms (bundled)", "fusion-pixel-12px-proportional-zh_hk.ttf", _
+		  AddFontRow("main.font.fusion", "fusion-pixel-12px-proportional-zh_hk.ttf", _
 		  "OFL-1.1", "Fusion Pixel Font 12px zh_hk (TakWolf)", 12)
-		  pmFont.AddRow(kOtherFont)
+		  pmFont.AddRow(T("main.font.other")) // its tag stays Nil
 		  
 		  lbSets.ColumnTypeAt(0) = DesktopListBox.CellTypes.CheckBox
 		  lbSets.HasHeader = True
 		  lbSets.HeaderAt(0) = " "
-		  lbSets.HeaderAt(1) = "Set"
-		  lbSets.HeaderAt(2) = "Characters"
 		  lbSets.ColumnWidths = "24,*,80"
 		  lbSets.ColumnAlignmentAt(2) = DesktopListBox.Alignments.Right
 		  lbSets.RemoveAllRows
@@ -759,8 +757,6 @@ End
 		  lbBlocks.ColumnTypeAt(0) = DesktopListBox.CellTypes.CheckBox
 		  lbBlocks.HasHeader = True
 		  lbBlocks.HeaderAt(0) = " "
-		  lbBlocks.HeaderAt(1) = "Range"
-		  lbBlocks.HeaderAt(2) = "Unicode block"
 		  lbBlocks.ColumnWidths = "24,110,*"
 		  FillBlocks
 		  
@@ -771,18 +767,54 @@ End
 		  pbProgress.MaximumValue = 1000
 		  pbProgress.Value = 0
 		  btnSave.Enabled = False
-		  If CharSets.SetCount = 0 Then lblStatus.Text = "Resources missing: CharSets.txt and Blocks.txt not found"
+		  ApplyLanguage
+		  If CharSets.SetCount = 0 Then lblStatus.Text = T("status.resourcesMissing")
 		  
 		  pmFont.SelectedRowIndex = 0
 		End Sub
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Sub ApplyLanguage()
+		  // The window's texts in the current language (Strings): at opening, and when the user chooses another one
+		  Self.Title = T("main.title")
+		  lbSets.HeaderAt(1) = T("main.header.set")
+		  lbSets.HeaderAt(2) = T("main.header.characters")
+		  lbBlocks.HeaderAt(1) = T("main.header.range")
+		  lbBlocks.HeaderAt(2) = T("main.header.block")
+		  tfBlockFilter.Hint = T("main.hint.blockFilter")
+		  tfRanges.Hint = T("main.hint.ranges")
+		  tfPackName.Hint = T("main.hint.packName")
+		  tfPreview.Hint = T("main.hint.sample")
+		  tfEditChar.Hint = T("main.hint.editChar")
+		  btnRender.Caption = If(mWorker <> Nil And mWorker.ThreadState <> Thread.ThreadStates.NotRunning, T("main.stop"), T("main.render"))
+		  btnSave.Caption = T("main.save")
+		  btnEdit.Caption = T("main.edit")
+		  btnUploadWindow.Caption = T("main.upload")
+		  // The font menu's own rows (the bundled fonts, Other font file...); a font file the user chose keeps its name
+		  For row As Integer = 0 To pmFont.RowCount - 1
+		    Dim tag As Variant = pmFont.RowTagAt(row)
+		    If tag = Nil Then
+		      RelabelFontRow(row, T("main.font.other"))
+		    ElseIf tag IsA Dictionary Then
+		      Dim d As Dictionary = tag
+		      If d.HasKey("key") Then RelabelFontRow(row, T(d.Value("key").StringValue))
+		    End If
+		  Next
+		  ShowFontInfo
+		  UpdateEdits
+		  UpdateSelection
+		  cvPreview.Refresh
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
-		Private Sub AddFontRow(caption As String, fileName As String, license As String, source As String, sizePx As Integer)
-		  // A bundled font (Resources/Fonts)
-		  pmFont.AddRow(caption)
+		Private Sub AddFontRow(key As String, fileName As String, license As String, source As String, sizePx As Integer)
+		  // A bundled font (Resources/Fonts), its name the text of key (Strings)
+		  pmFont.AddRow(T(key))
 		  Dim d As New Dictionary
+		  d.Value("key") = key
 		  d.Value("file") = fileName
 		  d.Value("license") = license
 		  d.Value("source") = source
@@ -834,13 +866,15 @@ End
 		  // Makes the font usable (CoreText) and takes its first face
 		  Dim faces() As String
 		  mFontName = ""
+		  mFontError = ""
 		  mEdits.RemoveAll // edits belong to the font they were made on
 		  UpdateEdits
 		  mPacks.RemoveAll
 		  mPreviewPack = Nil
 		  btnSave.Enabled = False
 		  If f = Nil Or Not FontRenderer.RegisterFontFile(f, faces) Then
-		    lblFontInfo.Text = "This font can't be used" + If(f <> Nil, ": " + f.Name, "")
+		    mFontError = If(f <> Nil, f.Name, "?")
+		    ShowFontInfo
 		    UpdateSelection
 		    cvPreview.Refresh
 		    Return
@@ -849,7 +883,8 @@ End
 		  mFontFile = f
 		  mFontLicense = license
 		  mFontSource = If(source <> "", source, f.Name)
-		  lblFontInfo.Text = faces(0) + "  (" + f.Name + If(faces.Count > 1, ", " + Str(faces.Count) + " faces: the first is used", "") + ")"
+		  mFaceCount = faces.Count
+		  ShowFontInfo
 		  If sizePx = 12 Then
 		    chk12.Value = True
 		    chk16.Value = False
@@ -907,6 +942,21 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub RelabelFontRow(row As Integer, text As String)
+		  // A popup row's text can't be changed in place: the row is removed and added again, with its tag and the
+		  // selection, without loading the font again (mRelabeling)
+		  Dim tag As Variant = pmFont.RowTagAt(row)
+		  Dim selected As Integer = pmFont.SelectedRowIndex
+		  mRelabeling = True
+		  pmFont.RemoveRowAt(row)
+		  pmFont.AddRowAt(row, text)
+		  pmFont.RowTagAt(row) = tag
+		  pmFont.SelectedRowIndex = selected
+		  mRelabeling = False
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function RenderedPacks() As RenderedPack()
 		  // The packs rendered (with the edits), for the upload window
@@ -921,16 +971,16 @@ End
 		  If packName.Right(4) = ".mfp" Then packName = packName.Left(packName.Length - 4)
 		  Dim m As MemoryBlock = PackBytes(pack, packName)
 		  If m = Nil Then
-		    lblStatus.Text = f.Name + ": the glyphs don't fit the pack format"
+		    lblStatus.Text = T("status.notFit", "file", f.Name)
 		    Return
 		  End If
 		  Try
 		    Dim b As BinaryStream = BinaryStream.Create(f, True)
 		    b.Write(m.StringValue(0, m.Size))
 		    b.Close
-		    lblStatus.Text = "Saved " + f.Name + ": " + Format(pack.Glyphs.Count, "#,##0") + " glyphs, " + Format(m.Size, "#,##0") + " bytes"
+		    lblStatus.Text = T("status.saved", "file", f.Name, "glyphs", Format(pack.Glyphs.Count, "#,##0"), "bytes", Format(m.Size, "#,##0"))
 		  Catch e As IOException
-		    lblStatus.Text = "Can't write " + f.Name + ": " + e.Message
+		    lblStatus.Text = T("status.cantWrite", "file", f.Name, "error", e.Message)
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -962,11 +1012,30 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ShowFontInfo()
+		  // The font in use (its first face, the file, the faces it has), or why it can't be used
+		  If mFontError = "?" Then
+		    lblFontInfo.Text = T("main.font.unusable")
+		  ElseIf mFontError <> "" Then
+		    lblFontInfo.Text = T("main.font.unusableFile", "file", mFontError)
+		  ElseIf mFontName = "" Or mFontFile = Nil Then
+		    lblFontInfo.Text = ""
+		  ElseIf mFaceCount > 1 Then
+		    lblFontInfo.Text = T("main.font.infoFaces", "face", mFontName, "file", mFontFile.Name, "count", Str(mFaceCount))
+		  Else
+		    lblFontInfo.Text = T("main.font.info", "face", mFontName, "file", mFontFile.Name)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateEdits()
 		  If mEdits.KeyCount = 0 Then
-		    lblEdits.Text = "No edited glyphs"
+		    lblEdits.Text = T("main.edits.none")
+		  ElseIf mEdits.KeyCount = 1 Then
+		    lblEdits.Text = T("main.edits.one")
 		  Else
-		    lblEdits.Text = Str(mEdits.KeyCount) + If(mEdits.KeyCount = 1, " edited glyph", " edited glyphs")
+		    lblEdits.Text = T("main.edits.many", "count", Str(mEdits.KeyCount))
 		  End If
 		End Sub
 	#tag EndMethod
@@ -982,8 +1051,8 @@ End
 		      If FontRenderer.HasGlyph(mFontName, cp) Then inFont = inFont + 1
 		    Next
 		  End If
-		  lblSelection.Text = Format(cps.Count, "#,##0") + " characters selected, " + Format(inFont, "#,##0") + " in the font" + _
-		  If(ok, "", "  (the ranges have an error)")
+		  lblSelection.Text = T(If(ok, "main.selection", "main.selection.rangeError"), "count", Format(cps.Count, "#,##0"), _
+		  "inFont", Format(inFont, "#,##0"))
 		End Sub
 	#tag EndMethod
 
@@ -1026,7 +1095,7 @@ End
 		      If System.Microseconds - lastUpdate > 200000 Then
 		        lastUpdate = System.Microseconds
 		        sender.AddUserInterfaceUpdate(New Dictionary("progress" : done / total, _
-		        "status" : Str(sizePx) + " px: " + Format(done, "#,##0") + " of " + Format(total, "#,##0")))
+		        "status" : T("status.progress", "size", Str(sizePx), "done", Format(done, "#,##0"), "total", Format(total, "#,##0"))))
 		      End If
 		    Next
 		    
@@ -1061,12 +1130,12 @@ End
 		      lblStatus.Text = d.Value("status").StringValue
 		    End If
 		    If d.HasKey("stopped") Then
-		      btnRender.Caption = "Render"
+		      btnRender.Caption = T("main.render")
 		      pbProgress.Value = 0
-		      lblStatus.Text = "Stopped"
+		      lblStatus.Text = T("status.stopped")
 		    End If
 		    If d.HasKey("done") Then
-		      btnRender.Caption = "Render"
+		      btnRender.Caption = T("main.render")
 		      pbProgress.Value = 1000
 		      mPacks = mNewPacks
 		      Dim parts() As String
@@ -1076,8 +1145,13 @@ End
 		          Dim g As GlyphBitmap = mEdits.Value(k)
 		          If k.StringValue.Left(3) = Str(p.SizePx) + ":" Then p.Replace(g.Clone)
 		        Next
-		        parts.Add(Str(p.SizePx) + " px: " + Format(p.Glyphs.Count, "#,##0") + " glyphs" + _
-		        If(p.Missing > 0, " (" + Format(p.Missing, "#,##0") + " not in the font)", "") + ", line height " + Str(p.LineHeight))
+		        If p.Missing > 0 Then
+		          parts.Add(T("status.renderedMissing", "size", Str(p.SizePx), "glyphs", Format(p.Glyphs.Count, "#,##0"), _
+		          "missing", Format(p.Missing, "#,##0"), "lineHeight", Str(p.LineHeight)))
+		        Else
+		          parts.Add(T("status.rendered", "size", Str(p.SizePx), "glyphs", Format(p.Glyphs.Count, "#,##0"), _
+		          "lineHeight", Str(p.LineHeight)))
+		        End If
 		        mPreviewPack = p
 		      Next
 		      lblStatus.Text = String.FromArray(parts, "; ")
@@ -1095,6 +1169,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mEdits As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFaceCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFontError As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1130,6 +1212,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRelabeling As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mStop As Boolean
 	#tag EndProperty
 
@@ -1146,9 +1232,6 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = kOtherFont, Type = String, Dynamic = False, Default = \"Other font file...", Scope = Private
-	#tag EndConstant
-
 
 #tag EndWindowCode
 
@@ -1156,6 +1239,7 @@ End
 	#tag Event
 		Sub SelectionChanged(item As DesktopMenuItem)
 		  #Pragma Unused item
+		  If mRelabeling Then Return
 		  Dim row As Integer = pmFont.SelectedRowIndex
 		  If row < 0 Then Return
 		  Dim tag As Variant = pmFont.RowTagAt(row)
@@ -1173,7 +1257,7 @@ End
 		  
 		  // Other font file...: added above it, then selected
 		  Dim ft As New FileType
-		  ft.Name = "Fonts"
+		  ft.Name = T("main.fileType.fonts")
 		  ft.Extensions = "ttf;otf;ttc;otc"
 		  Dim f As FolderItem = FolderItem.ShowOpenFileDialog(ft)
 		  If f = Nil Then
@@ -1235,24 +1319,24 @@ End
 		    Return
 		  End If
 		  If mFontName = "" Then
-		    lblStatus.Text = "Choose a font first"
+		    lblStatus.Text = T("status.chooseFont")
 		    Return
 		  End If
 		  Dim sizes() As Integer
 		  If chk12.Value Then sizes.Add(12)
 		  If chk16.Value Then sizes.Add(16)
 		  If sizes.Count = 0 Then
-		    lblStatus.Text = "Choose a size: 12 px, 16 px or both"
+		    lblStatus.Text = T("status.chooseSize")
 		    Return
 		  End If
 		  Dim ok As Boolean
 		  Dim cps() As Integer = SelectedCodePoints(ok)
 		  If Not ok Then
-		    lblStatus.Text = "The ranges have an error: hex values or ranges, e.g. 1000-109F, 4E00"
+		    lblStatus.Text = T("status.rangesError")
 		    Return
 		  End If
 		  If cps.Count = 0 Then
-		    lblStatus.Text = "Select some characters: a set, a block or a range"
+		    lblStatus.Text = T("status.selectChars")
 		    Return
 		  End If
 		  mWorkCps = cps
@@ -1261,7 +1345,7 @@ End
 		  mNewPacks = fresh
 		  mStop = False
 		  btnSave.Enabled = False
-		  btnRender.Caption = "Stop"
+		  btnRender.Caption = T("main.stop")
 		  pbProgress.Value = 0
 		  mWorker = New Thread
 		  AddHandler mWorker.Run, WeakAddressOf WorkerRun
@@ -1277,7 +1361,7 @@ End
 		  Dim name As String = tfPackName.Text.Trim
 		  If name = "" Then name = "fontpack"
 		  Dim mfp As New FileType
-		  mfp.Name = "Meshtastic Font Pack"
+		  mfp.Name = T("main.fileType.pack")
 		  mfp.Extensions = "mfp"
 		  If mPacks.Count = 1 Then
 		    Dim f As FolderItem = FolderItem.ShowSaveFileDialog(mfp, name + Str(mPacks(0).SizePx) + ".mfp")
@@ -1309,7 +1393,7 @@ End
 		  g.FillRectangle(0, 0, g.Width, g.Height)
 		  If mPreviewPack = Nil Then
 		    g.DrawingColor = &c808080
-		    g.DrawText("Render to see a preview", 8, 20)
+		    g.DrawText(T("main.preview.empty"), 8, 20)
 		    Return
 		  End If
 		  Const scale = 2
@@ -1345,23 +1429,24 @@ End
 	#tag Event
 		Sub Pressed()
 		  If mPacks.Count = 0 Then
-		    lblStatus.Text = "Render first, then edit"
+		    lblStatus.Text = T("status.renderFirstEdit")
 		    Return
 		  End If
 		  Dim cp As Integer = ParseEditChar(tfEditChar.Text)
 		  If cp < 0 Then
-		    lblStatus.Text = "Type the character to edit, or its code point (U+55BA)"
+		    lblStatus.Text = T("status.typeChar")
 		    Return
 		  End If
 		  // With two sizes rendered: which one
 		  Dim pack As RenderedPack = mPacks(0)
 		  If mPacks.Count > 1 Then
 		    Dim d As New MessageDialog
-		    d.Message = "Edit " + Chr(cp) + " at which size?"
+		    d.Message = T("main.editSize", "char", Chr(cp))
 		    d.ActionButton.Caption = Str(mPacks(0).SizePx) + " px"
 		    d.AlternateActionButton.Visible = True
 		    d.AlternateActionButton.Caption = Str(mPacks(1).SizePx) + " px"
 		    d.CancelButton.Visible = True
+		    d.CancelButton.Caption = T("button.cancel")
 		    Dim b As MessageDialogButton = d.ShowModal
 		    If b = d.CancelButton Then Return
 		    If b = d.AlternateActionButton Then pack = mPacks(1)
@@ -1384,7 +1469,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  If mPacks.Count = 0 Then
-		    lblStatus.Text = "Render first (or choose a pack file in the upload window)"
+		    lblStatus.Text = T("status.renderFirstUpload")
 		  End If
 		  Dim w As New UploadWindow
 		  w.ShowFor(Self)
