@@ -18,6 +18,8 @@ Inherits DesktopApplication
 		  Strings.Load
 		  BuildLanguageMenu
 		  ApplyMenus
+		  // Once more when the app has finished starting: macOS names its Window and Help menus itself at launch
+		  Timer.CallLater(0, AddressOf ApplyMenus)
 		End Sub
 	#tag EndEvent
 

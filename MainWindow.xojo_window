@@ -763,17 +763,31 @@ End
 		  tfPreview.Text = "你好，世界！佢哋喺度食緊飯 日本語のテスト 한국어 Привет"
 		  tfPackName.Text = "cjk"
 		  UpdateEdits
-		  lblStatus.Text = ""
+		  SetStatus("")
 		  pbProgress.MaximumValue = 1000
 		  pbProgress.Value = 0
 		  btnSave.Enabled = False
 		  ApplyLanguage
-		  If CharSets.SetCount = 0 Then lblStatus.Text = T("status.resourcesMissing")
+		  If CharSets.SetCount = 0 Then SetStatus("status.resourcesMissing")
 		  
 		  pmFont.SelectedRowIndex = 0
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub AddFontRow(key As String, fileName As String, license As String, source As String, sizePx As Integer)
+		  // A bundled font (Resources/Fonts), its name the text of key (Strings)
+		  pmFont.AddRow(T(key))
+		  Dim d As New Dictionary
+		  d.Value("key") = key
+		  d.Value("file") = fileName
+		  d.Value("license") = license
+		  d.Value("source") = source
+		  d.Value("size") = sizePx
+		  pmFont.RowTagAt(pmFont.LastAddedRowIndex) = d
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ApplyLanguage()
@@ -805,21 +819,8 @@ End
 		  ShowFontInfo
 		  UpdateEdits
 		  UpdateSelection
+		  ShowStatus
 		  cvPreview.Refresh
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub AddFontRow(key As String, fileName As String, license As String, source As String, sizePx As Integer)
-		  // A bundled font (Resources/Fonts), its name the text of key (Strings)
-		  pmFont.AddRow(T(key))
-		  Dim d As New Dictionary
-		  d.Value("key") = key
-		  d.Value("file") = fileName
-		  d.Value("license") = license
-		  d.Value("source") = source
-		  d.Value("size") = sizePx
-		  pmFont.RowTagAt(pmFont.LastAddedRowIndex) = d
 		End Sub
 	#tag EndMethod
 
@@ -971,16 +972,16 @@ End
 		  If packName.Right(4) = ".mfp" Then packName = packName.Left(packName.Length - 4)
 		  Dim m As MemoryBlock = PackBytes(pack, packName)
 		  If m = Nil Then
-		    lblStatus.Text = T("status.notFit", "file", f.Name)
+		    SetStatus("status.notFit", "file", f.Name)
 		    Return
 		  End If
 		  Try
 		    Dim b As BinaryStream = BinaryStream.Create(f, True)
 		    b.Write(m.StringValue(0, m.Size))
 		    b.Close
-		    lblStatus.Text = T("status.saved", "file", f.Name, "glyphs", Format(pack.Glyphs.Count, "#,##0"), "bytes", Format(m.Size, "#,##0"))
+		    SetStatus("status.saved", "file", f.Name, "glyphs", Format(pack.Glyphs.Count, "#,##0"), "bytes", Format(m.Size, "#,##0"))
 		  Catch e As IOException
-		    lblStatus.Text = T("status.cantWrite", "file", f.Name, "error", e.Message)
+		    SetStatus("status.cantWrite", "file", f.Name, "error", e.Message)
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -1009,6 +1010,43 @@ End
 		  Next
 		  Return out
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetStatus(key As String, ParamArray args() As String)
+		  // The status line: a text of Strings, kept as its key and values so that it's shown again in another language
+		  // (kRenderedStatus: the packs just rendered); "" clears it
+		  mStatusKey = key
+		  mStatusArgs = args
+		  If key = "" Then
+		    lblStatus.Text = ""
+		  Else
+		    ShowStatus
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowStatus()
+		  // The status line in the current language
+		  If mStatusKey = "" Then
+		    Return // empty, or progress (the render's next update replaces it)
+		  ElseIf mStatusKey = kRenderedStatus Then
+		    Dim parts() As String
+		    For Each p As RenderedPack In mPacks
+		      If p.Missing > 0 Then
+		        parts.Add(T("status.renderedMissing", "size", Str(p.SizePx), "glyphs", Format(p.Glyphs.Count, "#,##0"), _
+		        "missing", Format(p.Missing, "#,##0"), "lineHeight", Str(p.LineHeight)))
+		      Else
+		        parts.Add(T("status.rendered", "size", Str(p.SizePx), "glyphs", Format(p.Glyphs.Count, "#,##0"), _
+		        "lineHeight", Str(p.LineHeight)))
+		      End If
+		    Next
+		    lblStatus.Text = String.FromArray(parts, "; ")
+		  Else
+		    lblStatus.Text = TA(mStatusKey, mStatusArgs)
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1127,34 +1165,27 @@ End
 		  For Each d As Dictionary In data
 		    If d.HasKey("progress") Then
 		      pbProgress.Value = d.Value("progress").DoubleValue * 1000
-		      lblStatus.Text = d.Value("status").StringValue
+		      SetStatus("")
+		      lblStatus.Text = d.Value("status").StringValue // the next update replaces it
 		    End If
 		    If d.HasKey("stopped") Then
 		      btnRender.Caption = T("main.render")
 		      pbProgress.Value = 0
-		      lblStatus.Text = T("status.stopped")
+		      SetStatus("status.stopped")
 		    End If
 		    If d.HasKey("done") Then
 		      btnRender.Caption = T("main.render")
 		      pbProgress.Value = 1000
 		      mPacks = mNewPacks
-		      Dim parts() As String
 		      For Each p As RenderedPack In mPacks
 		        // The edited glyphs of this size replace the new rendering
 		        For Each k As Variant In mEdits.Keys
 		          Dim g As GlyphBitmap = mEdits.Value(k)
 		          If k.StringValue.Left(3) = Str(p.SizePx) + ":" Then p.Replace(g.Clone)
 		        Next
-		        If p.Missing > 0 Then
-		          parts.Add(T("status.renderedMissing", "size", Str(p.SizePx), "glyphs", Format(p.Glyphs.Count, "#,##0"), _
-		          "missing", Format(p.Missing, "#,##0"), "lineHeight", Str(p.LineHeight)))
-		        Else
-		          parts.Add(T("status.rendered", "size", Str(p.SizePx), "glyphs", Format(p.Glyphs.Count, "#,##0"), _
-		          "lineHeight", Str(p.LineHeight)))
-		        End If
 		        mPreviewPack = p
 		      Next
-		      lblStatus.Text = String.FromArray(parts, "; ")
+		      SetStatus(kRenderedStatus)
 		      btnSave.Enabled = mPacks.Count > 0
 		      cvPreview.Refresh
 		    End If
@@ -1216,6 +1247,14 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mStatusArgs() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mStatusKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mStop As Boolean
 	#tag EndProperty
 
@@ -1231,6 +1270,9 @@ End
 		Private mWorkSizes() As Integer
 	#tag EndProperty
 
+
+	#tag Constant, Name = kRenderedStatus, Type = String, Dynamic = False, Default = \"*rendered", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -1319,24 +1361,24 @@ End
 		    Return
 		  End If
 		  If mFontName = "" Then
-		    lblStatus.Text = T("status.chooseFont")
+		    SetStatus("status.chooseFont")
 		    Return
 		  End If
 		  Dim sizes() As Integer
 		  If chk12.Value Then sizes.Add(12)
 		  If chk16.Value Then sizes.Add(16)
 		  If sizes.Count = 0 Then
-		    lblStatus.Text = T("status.chooseSize")
+		    SetStatus("status.chooseSize")
 		    Return
 		  End If
 		  Dim ok As Boolean
 		  Dim cps() As Integer = SelectedCodePoints(ok)
 		  If Not ok Then
-		    lblStatus.Text = T("status.rangesError")
+		    SetStatus("status.rangesError")
 		    Return
 		  End If
 		  If cps.Count = 0 Then
-		    lblStatus.Text = T("status.selectChars")
+		    SetStatus("status.selectChars")
 		    Return
 		  End If
 		  mWorkCps = cps
@@ -1429,12 +1471,12 @@ End
 	#tag Event
 		Sub Pressed()
 		  If mPacks.Count = 0 Then
-		    lblStatus.Text = T("status.renderFirstEdit")
+		    SetStatus("status.renderFirstEdit")
 		    Return
 		  End If
 		  Dim cp As Integer = ParseEditChar(tfEditChar.Text)
 		  If cp < 0 Then
-		    lblStatus.Text = T("status.typeChar")
+		    SetStatus("status.typeChar")
 		    Return
 		  End If
 		  // With two sizes rendered: which one
@@ -1469,7 +1511,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  If mPacks.Count = 0 Then
-		    lblStatus.Text = T("status.renderFirstUpload")
+		    SetStatus("status.renderFirstUpload")
 		  End If
 		  Dim w As New UploadWindow
 		  w.ShowFor(Self)

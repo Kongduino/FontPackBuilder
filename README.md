@@ -14,9 +14,24 @@ side and command-line tools are in [MeshtasticFontPacks](https://github.com/Kong
 - **Upload:** a rendered pack or a pack file goes to a device over USB serial or TCP (the firmware's XModem transfer),
   to `/fonts/<name>.mfp`; the device checks it before installing it. When there's no room beside the old pack, the app
   offers to remove that one first. **Remove All Packs** removes every pack from the device (files and flash slots).
+- **Languages:** English, 繁體中文 or 한국어, chosen in the Language menu (see Languages below).
 
 Glyphs are drawn with CoreText, anti-aliasing and font smoothing off, which matches FreeType's mono rendering (the
 Python generator's) pixel for pixel, but for a few accents that rise above the ascender line.
+
+## Screenshots
+
+Choosing the characters and rendering a 16 px pack, in Korean, with the Language menu open:
+
+![Rendering a pack, in Korean](Assets/Render_Korean.png)
+
+Editing a glyph, 佢 (U+4F62), magnified, in Traditional Chinese:
+
+![The glyph editor, in Traditional Chinese](Assets/Edit_Chinese.png)
+
+Uploading a pack to a device over USB, in English:
+
+![Uploading a pack, in English](Assets/Upload_English.png)
 
 ## Building
 

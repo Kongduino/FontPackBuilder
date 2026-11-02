@@ -164,6 +164,13 @@ Protected Module Strings
 		Function T(key As String, ParamArray args() As String) As String
 		  // The text of key in the current language, else in English, else the key itself; args are pairs of a
 		  // placeholder name and its value: T("status.saved", "file", f.Name) fills {file}
+		  Return TA(key, args)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TA(key As String, args() As String) As String
+		  // T with the placeholder pairs in an array: for a text kept to be shown again in another language
 		  If mTexts = Nil Then Load
 		  Dim text As String = key
 		  If mTexts.HasKey(key) Then
