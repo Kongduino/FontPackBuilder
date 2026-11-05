@@ -80,6 +80,7 @@
   "upload.upload": "Upload",
   "upload.close": "Close",
   "upload.removeAll": "Remove All Packs…",
+  "upload.refreshPorts": "Refresh the list of ports",
   "upload.packSize": "{name} ({bytes} bytes)",
   "upload.log.disconnected": "Disconnected",
   "upload.log.disconnectedReason": "Disconnected: {reason}",

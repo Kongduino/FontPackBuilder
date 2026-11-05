@@ -1027,6 +1027,23 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ShowFontInfo()
+		  // The font in use (its first face, the file, the faces it has), or why it can't be used
+		  If mFontError = "?" Then
+		    lblFontInfo.Text = T("main.font.unusable")
+		  ElseIf mFontError <> "" Then
+		    lblFontInfo.Text = T("main.font.unusableFile", "file", mFontError)
+		  ElseIf mFontName = "" Or mFontFile = Nil Then
+		    lblFontInfo.Text = ""
+		  ElseIf mFaceCount > 1 Then
+		    lblFontInfo.Text = T("main.font.infoFaces", "face", mFontName, "file", mFontFile.Name, "count", Str(mFaceCount))
+		  Else
+		    lblFontInfo.Text = T("main.font.info", "face", mFontName, "file", mFontFile.Name)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ShowStatus()
 		  // The status line in the current language
 		  If mStatusKey = "" Then
@@ -1045,23 +1062,6 @@ End
 		    lblStatus.Text = String.FromArray(parts, "; ")
 		  Else
 		    lblStatus.Text = TA(mStatusKey, mStatusArgs)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ShowFontInfo()
-		  // The font in use (its first face, the file, the faces it has), or why it can't be used
-		  If mFontError = "?" Then
-		    lblFontInfo.Text = T("main.font.unusable")
-		  ElseIf mFontError <> "" Then
-		    lblFontInfo.Text = T("main.font.unusableFile", "file", mFontError)
-		  ElseIf mFontName = "" Or mFontFile = Nil Then
-		    lblFontInfo.Text = ""
-		  ElseIf mFaceCount > 1 Then
-		    lblFontInfo.Text = T("main.font.infoFaces", "face", mFontName, "file", mFontFile.Name, "count", Str(mFaceCount))
-		  Else
-		    lblFontInfo.Text = T("main.font.info", "face", mFontName, "file", mFontFile.Name)
 		  End If
 		End Sub
 	#tag EndMethod

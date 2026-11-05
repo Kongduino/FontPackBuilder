@@ -1,8 +1,8 @@
 # FontPackBuilder
 
-A macOS app (Xojo) that builds **Meshtastic Font Packs** (`.mfp`): the glyphs of one font at one pixel size, for the
-characters a device's built-in font doesn't have (Chinese, Japanese, Korean, Cantonese...). The format, the firmware
-side and command-line tools are in [MeshtasticFontPacks](https://github.com/Kongduino/MeshtasticFontPacks).
+A macOS and Windows app (Xojo) that builds **Meshtastic Font Packs** (`.mfp`): the glyphs of one font at one pixel size,
+for the characters a device's built-in font doesn't have (Chinese, Japanese, Korean, Cantonese...). The format, the
+firmware side and command-line tools are in [MeshtasticFontPacks](https://github.com/Kongduino/MeshtasticFontPacks).
 
 - **Font:** GNU Unifont (16 px) or Fusion Pixel (12 px, Hong Kong forms), both bundled, or any `.ttf`/`.otf`/`.ttc`.
 - **Characters:** named sets (GB2312, Big5, HKSCS, JIS X 0208, KS X 1001, kana...), Unicode blocks (with a filter),
@@ -17,7 +17,9 @@ side and command-line tools are in [MeshtasticFontPacks](https://github.com/Kong
 - **Languages:** English, 繁體中文 or 한국어, chosen in the Language menu (see Languages below).
 
 Glyphs are drawn with CoreText, anti-aliasing and font smoothing off, which matches FreeType's mono rendering (the
-Python generator's) pixel for pixel, but for a few accents that rise above the ascender line.
+Python generator's) pixel for pixel, but for a few accents that rise above the ascender line. On Windows, GDI draws them
+the same way (anti-aliasing off, the font's own glyph by its index), with the advances and the ascent taken from the
+font's tables, as CoreText reports them.
 
 ## Screenshots
 
@@ -49,17 +51,17 @@ The interface is in English, 繁體中文 or 한국어, chosen in the **Language
 window at once and is remembered. By default the app uses the system language when there's a file for it. The
 Korean texts still need a review by a native speaker.
 
-Each language is a JSON file in `Resources/Languages` (`en.json`, `zh-Hant.json`, `ko.json`): `"_language"` is its
-name in its own script, then one `"key": "text"` per text, with `{placeholders}` the app fills in
-(`"status.saved": "Saved {file}: {glyphs} glyphs, {bytes} bytes"`). A text a file doesn't have is shown in English.
-To add or try a language without rebuilding the app, put its file in
-`~/Library/Application Support/FontPackBuilder/Languages`; a file there replaces a built-in one of the same name.
-`tools/check_strings.py` checks the keys the code uses against `en.json`, and each translation against `en.json`
-(missing or extra keys, placeholders that differ).
+Each language is a JSON file in `Resources/Languages` (`en.json`, `zh-Hant.json`, `ko.json`): `"_language"` is its name
+in its own script, then one `"key": "text"` per text, with `{placeholders}` the app fills in (`"status.saved": "Saved
+{file}: {glyphs} glyphs, {bytes} bytes"`). A text a file doesn't have is shown in English. To add or try a language
+without rebuilding the app, put its file in `~/Library/Application Support/FontPackBuilder/Languages` (on Windows
+`%APPDATA%\FontPackBuilder\Languages`); a file there replaces a built-in one of the same name. `tools/check_strings.py`
+checks the keys the code uses against `en.json`, and each translation against `en.json` (missing or extra keys,
+placeholders that differ).
 
 ## Next
 
-Project files (font, selection, edits), compressed transfers, Windows and Linux.
+Project files (font, selection, edits), compressed transfers, Linux.
 
 ## Licence
 

@@ -80,6 +80,7 @@
   "upload.upload": "업로드",
   "upload.close": "닫기",
   "upload.removeAll": "모든 팩 제거…",
+  "upload.refreshPorts": "포트 목록 새로 고침",
   "upload.packSize": "{name} ({bytes}바이트)",
   "upload.log.disconnected": "연결 해제됨",
   "upload.log.disconnectedReason": "연결 해제됨: {reason}",

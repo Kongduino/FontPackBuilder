@@ -80,6 +80,7 @@
   "upload.upload": "上載",
   "upload.close": "關閉",
   "upload.removeAll": "移除所有字型包…",
+  "upload.refreshPorts": "重新整理連接埠清單",
   "upload.packSize": "{name}（{bytes} 位元組）",
   "upload.log.disconnected": "已中斷連接",
   "upload.log.disconnectedReason": "已中斷連接：{reason}",

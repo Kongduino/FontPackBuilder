@@ -36,7 +36,7 @@ Begin DesktopWindow UploadWindow
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   74
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -52,7 +52,7 @@ Begin DesktopWindow UploadWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   181
+      Width           =   127
    End
    Begin DesktopTextField tfHost
       AllowAutoDeactivate=   True
@@ -400,6 +400,37 @@ Begin DesktopWindow UploadWindow
       Visible         =   True
       Width           =   148
    End
+   Begin DesktopButton btRefresh
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "🔄"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   0
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   34
+   End
 End
 #tag EndDesktopWindow
 
@@ -413,17 +444,7 @@ End
 
 	#tag Event
 		Sub Opening()
-		  // The serial ports (USB devices first), then the network
-		  pmPort.RemoveAllRows
-		  Dim preferred As Integer = -1
-		  For i As Integer = 0 To SerialDevice.Count - 1
-		    Dim d As SerialDevice = SerialDevice.At(i)
-		    pmPort.AddRow(d.Name)
-		    pmPort.RowTagAt(pmPort.LastAddedRowIndex) = d
-		    If preferred < 0 And (d.Name.IndexOf("usbmodem") >= 0 Or d.Name.IndexOf("usbserial") >= 0) Then preferred = pmPort.LastAddedRowIndex
-		  Next
-		  pmPort.AddRow(T("upload.network")) // its tag stays Nil
-		  pmPort.SelectedRowIndex = If(preferred >= 0, preferred, 0)
+		  RefreshPorts
 		  pbUpload.MaximumValue = 1000
 		  pbUpload.Value = 0
 		  taLog.ReadOnly = True
@@ -439,6 +460,7 @@ End
 		  tfHost.Hint = T("upload.hint.host")
 		  btnClose.Caption = T("upload.close")
 		  btnRemoveAll.Caption = T("upload.removeAll")
+		  btRefresh.Tooltip = T("upload.refreshPorts")
 		  // The menus' own rows: Network (TCP)..., the rendered packs, Pack file...; a port or a file keeps its name
 		  For row As Integer = 0 To pmPort.RowCount - 1
 		    If pmPort.RowTagAt(row) = Nil Then Relabel(pmPort, row, T("upload.network"))
@@ -514,6 +536,37 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub RefreshPorts()
+		  // The serial ports (USB devices first), then the network: at opening, and after a device was plugged in or out
+		  // (only while not connected). The port chosen before stays chosen when it's still there
+		  Dim previous As String
+		  Dim wasNetwork As Boolean
+		  If pmPort.SelectedRowIndex >= 0 Then
+		    wasNetwork = pmPort.RowTagAt(pmPort.SelectedRowIndex) = Nil
+		    If Not wasNetwork Then previous = pmPort.SelectedRowText
+		  End If
+		  pmPort.RemoveAllRows
+		  Dim preferred As Integer = -1
+		  Dim kept As Integer = -1
+		  For i As Integer = 0 To SerialDevice.Count - 1
+		    Dim d As SerialDevice = SerialDevice.At(i)
+		    pmPort.AddRow(d.Name)
+		    pmPort.RowTagAt(pmPort.LastAddedRowIndex) = d
+		    If preferred < 0 And (d.Name.IndexOf("usbmodem") >= 0 Or d.Name.IndexOf("usbserial") >= 0) Then preferred = pmPort.LastAddedRowIndex
+		    If previous <> "" And d.Name = previous Then kept = pmPort.LastAddedRowIndex
+		  Next
+		  pmPort.AddRow(T("upload.network")) // its tag stays Nil
+		  If wasNetwork Then kept = pmPort.LastAddedRowIndex
+		  If kept >= 0 Then
+		    pmPort.SelectedRowIndex = kept
+		  Else
+		    pmPort.SelectedRowIndex = If(preferred >= 0, preferred, 0)
+		  End If
+		  UpdateControls
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Relabel(pm As DesktopPopupMenu, row As Integer, text As String)
 		  // A popup row's text can't be changed in place: the row is removed and added again, with its tag and the
 		  // selection, without the selection's side effects (mRelabeling)
@@ -568,6 +621,7 @@ End
 		  Dim open As Boolean = mLink <> Nil And mLink.IsOpen
 		  tfHost.Enabled = tcp And Not open
 		  pmPort.Enabled = Not open
+		  btRefresh.Enabled = Not open // the ports can change only while none is in use
 		  btnConnect.Caption = If(open, T("upload.disconnect"), T("upload.connect"))
 		  btnConnect.Enabled = Not busy
 		  btnUpload.Caption = If(busy, T("button.cancel"), T("upload.upload"))
@@ -654,8 +708,6 @@ End
 	#tag Property, Flags = &h21
 		Private mUploader As PackUploader
 	#tag EndProperty
-
-
 
 
 #tag EndWindowCode
@@ -832,6 +884,13 @@ End
 		    Return
 		  End If
 		  Log(T("upload.log.askedRemoveAll"))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btRefresh
+	#tag Event
+		Sub Pressed()
+		  RefreshPorts
 		End Sub
 	#tag EndEvent
 #tag EndEvents
