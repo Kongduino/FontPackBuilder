@@ -47,11 +47,10 @@
   "main.edits.none": "No edited glyphs",
   "main.edits.one": "1 edited glyph",
   "main.edits.many": "{count} edited glyphs",
-  "main.editSize": "Edit {char} at which size?",
 
   "status.resourcesMissing": "Resources missing: CharSets.txt and Blocks.txt not found",
   "status.chooseFont": "Choose a font first",
-  "status.chooseSize": "Choose a size: 12 px, 16 px or both",
+  "status.chooseSize": "Choose the pack's size: 12, 16 or 24 px",
   "status.rangesError": "The ranges have an error: hex values or ranges, e.g. 1000-109F, 4E00",
   "status.selectChars": "Select some characters: a set, a block or a range",
   "status.progress": "{size} px: {done} of {total}",

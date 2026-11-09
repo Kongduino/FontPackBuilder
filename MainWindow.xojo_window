@@ -11,20 +11,20 @@ Begin DesktopWindow MainWindow
    HasMaximizeButton=   True
    HasMinimizeButton=   True
    HasTitleBar     =   True
-   Height          =   640
+   Height          =   468
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   900
    MenuBar         =   2013911039
    MenuBarVisible  =   False
-   MinimumHeight   =   640
-   MinimumWidth    =   900
+   MinimumHeight   =   468
+   MinimumWidth    =   696
    Resizeable      =   True
    Title           =   "FontPackBuilder"
    Type            =   0
    Visible         =   True
-   Width           =   900
+   Width           =   696
    Begin DesktopPopupMenu pmFont
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -68,7 +68,7 @@ Begin DesktopWindow MainWindow
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Multiline       =   False
       Scope           =   0
@@ -84,67 +84,36 @@ Begin DesktopWindow MainWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   600
+      Width           =   264
    End
-   Begin DesktopCheckBox chk12
+   Begin DesktopPopupMenu pmSize
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "12 px"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
       Index           =   -2147483648
+      InitialValue    =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   556
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   0
+      SelectedRowIndex=   -1
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   52
+      Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   False
       Visible         =   True
-      VisualState     =   0
-      Width           =   100
-   End
-   Begin DesktopCheckBox chk16
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Caption         =   "16 px"
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   132
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   0
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   52
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      VisualState     =   0
-      Width           =   100
+      Width           =   120
    End
    Begin DesktopListBox lbSets
       AllowAutoDeactivate=   True
@@ -169,7 +138,7 @@ Begin DesktopWindow MainWindow
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   200
+      Height          =   60
       Index           =   -2147483648
       InitialValue    =   "checkbox	name	count"
       Italic          =   False
@@ -186,11 +155,11 @@ Begin DesktopWindow MainWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   84
+      Top             =   52
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   393
+      Width           =   307
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -217,15 +186,15 @@ Begin DesktopWindow MainWindow
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   435
+      Height          =   295
       Index           =   -2147483648
       InitialValue    =   "checkbox	range	block name"
       Italic          =   False
-      Left            =   425
+      Left            =   339
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
       RowSelectionType=   0
@@ -234,11 +203,11 @@ Begin DesktopWindow MainWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   84
+      Top             =   52
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   455
+      Width           =   337
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -277,12 +246,12 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   296
+      Top             =   124
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   393
+      Width           =   307
    End
    Begin DesktopTextField tfRanges
       AllowAutoDeactivate=   True
@@ -301,11 +270,11 @@ Begin DesktopWindow MainWindow
       Hint            =   "Ranges (hex): 1000-109F, 4E00"
       Index           =   -2147483648
       Italic          =   False
-      Left            =   425
+      Left            =   339
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   False
       MaximumCharactersAllowed=   0
       Password        =   False
@@ -318,12 +287,12 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   531
+      Top             =   359
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   455
+      Width           =   337
    End
    Begin DesktopLabel lblSelection
       AllowAutoDeactivate=   True
@@ -351,11 +320,11 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   330
+      Top             =   158
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   393
+      Width           =   307
    End
    Begin DesktopTextField tfPackName
       AllowAutoDeactivate=   True
@@ -391,12 +360,12 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   362
+      Top             =   190
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   393
+      Width           =   307
    End
    Begin DesktopButton btnRender
       AllowAutoDeactivate=   True
@@ -424,7 +393,7 @@ Begin DesktopWindow MainWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   600
+      Top             =   428
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -455,7 +424,7 @@ Begin DesktopWindow MainWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   600
+      Top             =   428
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -482,7 +451,7 @@ Begin DesktopWindow MainWindow
       TabIndex        =   12
       TabPanelIndex   =   0
       Tooltip         =   ""
-      Top             =   600
+      Top             =   428
       Transparent     =   False
       Value           =   50.0
       Visible         =   True
@@ -518,11 +487,11 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   568
+      Top             =   396
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   860
+      Width           =   307
    End
    Begin DesktopTextField tfPreview
       AllowAutoDeactivate=   True
@@ -558,12 +527,12 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   396
+      Top             =   224
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   393
+      Width           =   307
    End
    Begin DesktopCanvas cvPreview
       AllowAutoDeactivate=   True
@@ -572,7 +541,7 @@ Begin DesktopWindow MainWindow
       AllowTabs       =   False
       Backdrop        =   0
       Enabled         =   True
-      Height          =   126
+      Height          =   131
       Index           =   -2147483648
       Left            =   20
       LockBottom      =   True
@@ -585,10 +554,10 @@ Begin DesktopWindow MainWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   427
+      Top             =   255
       Transparent     =   False
       Visible         =   True
-      Width           =   393
+      Width           =   307
    End
    Begin DesktopTextField tfEditChar
       AllowAutoDeactivate=   True
@@ -607,7 +576,7 @@ Begin DesktopWindow MainWindow
       Hint            =   "Character or U+hex"
       Index           =   -2147483648
       Italic          =   False
-      Left            =   425
+      Left            =   339
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -624,12 +593,12 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   565
+      Top             =   396
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   144
+      Width           =   140
    End
    Begin DesktopButton btnEdit
       AllowAutoDeactivate=   True
@@ -644,7 +613,7 @@ Begin DesktopWindow MainWindow
       Height          =   28
       Index           =   -2147483648
       Italic          =   False
-      Left            =   581
+      Left            =   491
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -656,7 +625,7 @@ Begin DesktopWindow MainWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   565
+      Top             =   396
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -672,7 +641,7 @@ Begin DesktopWindow MainWindow
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   425
+      Left            =   435
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -688,11 +657,11 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   600
+      Top             =   428
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   455
+      Width           =   273
    End
    Begin DesktopButton btnUploadWindow
       AllowAutoDeactivate=   True
@@ -707,11 +676,11 @@ Begin DesktopWindow MainWindow
       Height          =   28
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   596
       LockBottom      =   True
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   0
@@ -719,7 +688,7 @@ Begin DesktopWindow MainWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   565
+      Top             =   396
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -731,16 +700,21 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
+		  #If TargetLinux
+		    If me.Width > 640 Then me.Width = 640
+		    If me.Height > 440 Then me.Height = 440
+		  #EndIf
+		  
 		  // FontPackBuilder: builds Meshtastic Font Packs (.mfp, format version 2) from a font: choose the characters by
-		  // set, Unicode block or range, render them at 12 and/or 16 px, save one pack per size
+		  // set, Unicode block or range, render them at 12, 16 or 24 px, save the pack
 		  mCheckedBlocks = New Dictionary
 		  mEdits = New Dictionary
 		  
 		  pmFont.RemoveAllRows
 		  AddFontRow("main.font.unifont", "unifont-18.0.01.otf", _
-		  "OFL-1.1 OR GPL-2.0-or-later WITH Font-exception-2.0", "GNU Unifont 18.0.01", 16)
+		  "OFL-1.1 OR GPL-2.0-or-later WITH Font-exception-2.0", "GNU Unifont 18.0.01")
 		  AddFontRow("main.font.fusion", "fusion-pixel-12px-proportional-zh_hk.ttf", _
-		  "OFL-1.1", "Fusion Pixel Font 12px zh_hk (TakWolf)", 12)
+		  "OFL-1.1", "Fusion Pixel Font 12px zh_hk (TakWolf)")
 		  pmFont.AddRow(T("main.font.other")) // its tag stays Nil
 		  
 		  lbSets.ColumnTypeAt(0) = DesktopListBox.CellTypes.CheckBox
@@ -767,6 +741,15 @@ End
 		  pbProgress.MaximumValue = 1000
 		  pbProgress.Value = 0
 		  btnSave.Enabled = False
+		  // One size per pack, chosen by the user (no default): 12 and 16 px for small screens, 24 px for large ones (the
+		  // T5 E-Paper's 960 x 540); Render waits for it
+		  pmSize.RemoveAllRows
+		  For Each sizePx As Integer In Array(12, 16, 24)
+		    pmSize.AddRow(Str(sizePx) + " px")
+		    pmSize.RowTagAt(pmSize.LastAddedRowIndex) = sizePx
+		  Next
+		  pmSize.SelectedRowIndex = -1
+		  btnRender.Enabled = False
 		  ApplyLanguage
 		  If CharSets.SetCount = 0 Then SetStatus("status.resourcesMissing")
 		  
@@ -776,7 +759,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub AddFontRow(key As String, fileName As String, license As String, source As String, sizePx As Integer)
+		Private Sub AddFontRow(key As String, fileName As String, license As String, source As String)
 		  // A bundled font (Resources/Fonts), its name the text of key (Strings)
 		  pmFont.AddRow(T(key))
 		  Dim d As New Dictionary
@@ -784,7 +767,6 @@ End
 		  d.Value("file") = fileName
 		  d.Value("license") = license
 		  d.Value("source") = source
-		  d.Value("size") = sizePx
 		  pmFont.RowTagAt(pmFont.LastAddedRowIndex) = d
 		End Sub
 	#tag EndMethod
@@ -863,7 +845,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub LoadFont(f As FolderItem, license As String, source As String, sizePx As Integer)
+		Private Sub LoadFont(f As FolderItem, license As String, source As String)
 		  // Makes the font usable (CoreText) and takes its first face
 		  Dim faces() As String
 		  mFontName = ""
@@ -886,13 +868,6 @@ End
 		  mFontSource = If(source <> "", source, f.Name)
 		  mFaceCount = faces.Count
 		  ShowFontInfo
-		  If sizePx = 12 Then
-		    chk12.Value = True
-		    chk16.Value = False
-		  ElseIf sizePx = 16 Then
-		    chk12.Value = False
-		    chk16.Value = True
-		  End If
 		  UpdateSelection
 		  cvPreview.Refresh
 		End Sub
@@ -1289,10 +1264,10 @@ End
 		    Dim d As Dictionary = tag
 		    mPreviousFontRow = row
 		    If d.HasKey("item") Then
-		      LoadFont(d.Value("item"), d.Value("license"), d.Value("source"), d.Value("size"))
+		      LoadFont(d.Value("item"), d.Value("license"), d.Value("source"))
 		    Else
 		      Dim fonts As FolderItem = CharSets.ResourceFile("Fonts")
-		      LoadFont(If(fonts <> Nil, fonts.Child(d.Value("file").StringValue), Nil), d.Value("license"), d.Value("source"), d.Value("size"))
+		      LoadFont(If(fonts <> Nil, fonts.Child(d.Value("file").StringValue), Nil), d.Value("license"), d.Value("source"))
 		    End If
 		    Return
 		  End If
@@ -1310,10 +1285,18 @@ End
 		  d.Value("item") = f
 		  d.Value("license") = ""
 		  d.Value("source") = f.Name
-		  d.Value("size") = 0
 		  pmFont.AddRowAt(pmFont.RowCount - 1, f.Name)
 		  pmFont.RowTagAt(pmFont.RowCount - 2) = d
 		  pmFont.SelectedRowIndex = pmFont.RowCount - 2
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events pmSize
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused item
+		  // Render needs a size (or stops a render in progress)
+		  btnRender.Enabled = Me.SelectedRowIndex >= 0 Or (mWorker <> Nil And mWorker.ThreadState <> Thread.ThreadStates.NotRunning)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1364,13 +1347,12 @@ End
 		    SetStatus("status.chooseFont")
 		    Return
 		  End If
-		  Dim sizes() As Integer
-		  If chk12.Value Then sizes.Add(12)
-		  If chk16.Value Then sizes.Add(16)
-		  If sizes.Count = 0 Then
+		  If pmSize.SelectedRowIndex < 0 Then
 		    SetStatus("status.chooseSize")
 		    Return
 		  End If
+		  Dim sizes() As Integer
+		  sizes.Add(pmSize.RowTagAt(pmSize.SelectedRowIndex).IntegerValue)
 		  Dim ok As Boolean
 		  Dim cps() As Integer = SelectedCodePoints(ok)
 		  If Not ok Then
@@ -1405,17 +1387,8 @@ End
 		  Dim mfp As New FileType
 		  mfp.Name = T("main.fileType.pack")
 		  mfp.Extensions = "mfp"
-		  If mPacks.Count = 1 Then
-		    Dim f As FolderItem = FolderItem.ShowSaveFileDialog(mfp, name + Str(mPacks(0).SizePx) + ".mfp")
-		    If f <> Nil Then SavePack(mPacks(0), f)
-		  Else
-		    // One pack per size: name12.mfp, name16.mfp in the chosen folder
-		    Dim dir As FolderItem = FolderItem.ShowSelectFolderDialog
-		    If dir = Nil Then Return
-		    For Each p As RenderedPack In mPacks
-		      SavePack(p, dir.Child(name + Str(p.SizePx) + ".mfp"))
-		    Next
-		  End If
+		  Dim f As FolderItem = FolderItem.ShowSaveFileDialog(mfp, name + Str(mPacks(0).SizePx) + ".mfp")
+		  If f <> Nil Then SavePack(mPacks(0), f)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1479,20 +1452,7 @@ End
 		    SetStatus("status.typeChar")
 		    Return
 		  End If
-		  // With two sizes rendered: which one
-		  Dim pack As RenderedPack = mPacks(0)
-		  If mPacks.Count > 1 Then
-		    Dim d As New MessageDialog
-		    d.Message = T("main.editSize", "char", Chr(cp))
-		    d.ActionButton.Caption = Str(mPacks(0).SizePx) + " px"
-		    d.AlternateActionButton.Visible = True
-		    d.AlternateActionButton.Caption = Str(mPacks(1).SizePx) + " px"
-		    d.CancelButton.Visible = True
-		    d.CancelButton.Caption = T("button.cancel")
-		    Dim b As MessageDialogButton = d.ShowModal
-		    If b = d.CancelButton Then Return
-		    If b = d.AlternateActionButton Then pack = mPacks(1)
-		  End If
+		  Dim pack As RenderedPack = mPacks(0) // one size per pack
 		  // The glyph as it is now; a blank one when neither the font nor an edit has it
 		  Dim current As GlyphBitmap = pack.Glyph(cp)
 		  If current = Nil Then
@@ -1518,3 +1478,248 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag ViewBehavior
+	#tag ViewProperty
+		Name="Name"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Interfaces"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Super"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Width"
+		Visible=true
+		Group="Size"
+		InitialValue="600"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Height"
+		Visible=true
+		Group="Size"
+		InitialValue="400"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaximumWidth"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaximumHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Type"
+		Visible=true
+		Group="Frame"
+		InitialValue="0"
+		Type="Types"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Document"
+			"1 - Movable Modal"
+			"2 - Modal Dialog"
+			"3 - Floating Window"
+			"4 - Plain Box"
+			"5 - Shadowed Box"
+			"6 - Rounded Window"
+			"7 - Global Floating Window"
+			"8 - Sheet Window"
+			"9 - Modeless Dialog"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Title"
+		Visible=true
+		Group="Frame"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasCloseButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMaximizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMinimizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasFullScreenButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Resizeable"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MacProcID"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="0"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreen"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="DefaultLocation"
+		Visible=true
+		Group="Behavior"
+		InitialValue="2"
+		Type="Locations"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Default"
+			"1 - Parent Window"
+			"2 - Main Screen"
+			"3 - Parent Window Screen"
+			"4 - Stagger"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Visible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ImplicitInstance"
+		Visible=true
+		Group="Window Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&cFFFFFF"
+		Type="ColorGroup"
+		EditorType="ColorGroup"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBar"
+		Visible=true
+		Group="Menus"
+		InitialValue=""
+		Type="DesktopMenuBar"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBarVisible"
+		Visible=true
+		Group="Deprecated"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+#tag EndViewBehavior

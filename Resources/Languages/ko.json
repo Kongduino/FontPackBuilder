@@ -47,11 +47,10 @@
   "main.edits.none": "편집한 글리프 없음",
   "main.edits.one": "편집한 글리프 1개",
   "main.edits.many": "편집한 글리프 {count}개",
-  "main.editSize": "{char}을(를) 어느 크기로 편집할까요?",
 
   "status.resourcesMissing": "리소스 없음: CharSets.txt와 Blocks.txt를 찾을 수 없습니다",
   "status.chooseFont": "먼저 글꼴을 선택하세요",
-  "status.chooseSize": "크기를 선택하세요: 12 px, 16 px 또는 둘 다",
+  "status.chooseSize": "글꼴 팩의 크기를 선택하세요: 12, 16 또는 24 px",
   "status.rangesError": "범위에 오류가 있습니다: 16진수 값이나 범위로 입력하세요. 예: 1000-109F, 4E00",
   "status.selectChars": "문자를 선택하세요: 문자 집합, 블록 또는 범위",
   "status.progress": "{size} px: {total}개 중 {done}개",

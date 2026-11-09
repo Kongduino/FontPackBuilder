@@ -47,11 +47,10 @@
   "main.edits.none": "沒有已編輯的字形",
   "main.edits.one": "已編輯 1 個字形",
   "main.edits.many": "已編輯 {count} 個字形",
-  "main.editSize": "以哪個大小編輯 {char}？",
 
   "status.resourcesMissing": "缺少資源：找不到 CharSets.txt 和 Blocks.txt",
   "status.chooseFont": "請先選擇字型",
-  "status.chooseSize": "請選擇大小：12 px、16 px 或兩者",
+  "status.chooseSize": "請選擇字型包的大小：12、16 或 24 px",
   "status.rangesError": "範圍有錯誤：請輸入十六進位數值或範圍，例如 1000-109F, 4E00",
   "status.selectChars": "請選擇字元：字集、區段或範圍",
   "status.progress": "{size} px：{done} / {total}",

@@ -7,7 +7,7 @@ firmware side and command-line tools are in [MeshtasticFontPacks](https://github
 - **Font:** GNU Unifont (16 px) or Fusion Pixel (12 px, Hong Kong forms), both bundled, or any `.ttf`/`.otf`/`.ttc`.
 - **Characters:** named sets (GB2312, Big5, HKSCS, JIS X 0208, KS X 1001, kana...), Unicode blocks (with a filter),
   and hex ranges (`1000-109F, U+4E00`). The app counts the selected characters and those the font has.
-- **Sizes:** 12 px, 16 px, or both (one pack each).
+- **Size:** 12, 16 or 24 px, one per pack, chosen in the menu before rendering. 24 px is for large screens such as the LilyGo T5 E-Paper's 960 x 540; it needs an outline font (`.ttf`/`.otf`), e.g. [Noto Sans CJK](https://github.com/notofonts/noto-cjk), as the bundled fonts are pixel fonts made for 12 and 16 px.
 - **Glyph editor:** any glyph magnified, with its line box, baseline, pen and advance: draw, move, change the advance,
   revert to the font's. A character the font doesn't have can be drawn from scratch. Edits are kept across renders.
 - **Packs** are written in format version 2, the same bytes as `mkfontpack.py` for the same font and characters.
