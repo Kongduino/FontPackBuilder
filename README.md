@@ -3,6 +3,9 @@
 A macOS and Windows app (Xojo) that builds **Meshtastic Font Packs** (`.mfp`): the glyphs of one font at one pixel size,
 for the characters a device's built-in font doesn't have (Chinese, Japanese, Korean, Cantonese...). The format, the
 firmware side and command-line tools are in [MeshtasticFontPacks](https://github.com/Kongduino/MeshtasticFontPacks).
+Firmware that installs and uses the packs, with Chinese stroke and Korean (나랏글) input, is in
+[meshtastic-fontpacks](https://github.com/Kongduino/meshtastic-fontpacks), a fork of the Meshtastic firmware (branch
+`font-packs`).
 
 - **Font:** GNU Unifont (16 px) or Fusion Pixel (12 px, Hong Kong forms), both bundled, or any `.ttf`/`.otf`/`.ttc`.
 - **Characters:** named sets (GB2312, Big5, HKSCS, JIS X 0208, KS X 1001, kana...), Unicode blocks (with a filter),
