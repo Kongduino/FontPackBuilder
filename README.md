@@ -66,6 +66,12 @@ placeholders that differ).
 
 Project files (font, selection, edits), compressed transfers, Linux.
 
+## Credits
+
+The firmware's CJK line breaking (kinsoku) uses the rules and character lists from
+[meshtastic/firmware#12469](https://github.com/meshtastic/firmware/pull/12469) (Japanese text on OLED displays) by
+[mntszk](https://github.com/mntszk). The bundled fonts are credited under Licence.
+
 ## Licence
 
 GPL-3.0 (see `LICENSE`). The bundled fonts keep their own licences: Fusion Pixel Font (TakWolf) is OFL-1.1; GNU Unifont
