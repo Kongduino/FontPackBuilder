@@ -2,6 +2,17 @@
 			Begin BuildStepList Linux
 				Begin BuildProjectStep Build
 				End
+				Begin CopyFilesBuildStep CopyFiles3
+					AppliesTo = 0
+					Architecture = 0
+					Target = 0
+					Destination = 1
+					Subdirectory = 
+					FolderItem = Li4vUmVzb3VyY2VzL0Jsb2Nrcy50eHQ=
+					FolderItem = Li4vUmVzb3VyY2VzL0NoYXJTZXRzLnR4dA==
+					FolderItem = Li4vUmVzb3VyY2VzL0ZvbnRzLw==
+					FolderItem = Li4vUmVzb3VyY2VzL0xhbmd1YWdlcy8=
+				End
 			End
 			Begin BuildStepList Mac OS X
 				Begin BuildProjectStep Build
@@ -30,7 +41,7 @@
 					Architecture = 0
 					Target = 0
 					Destination = 1
-					Subdirectory =
+					Subdirectory = 
 					FolderItem = Li4vUmVzb3VyY2VzL0Jsb2Nrcy50eHQ=
 					FolderItem = Li4vUmVzb3VyY2VzL0NoYXJTZXRzLnR4dA==
 					FolderItem = Li4vUmVzb3VyY2VzL0ZvbnRzLw==

@@ -3,13 +3,13 @@ Protected Module FontRenderer
 	#tag Method, Flags = &h0
 		Function Ascent(fontName As String, sizePx As Integer) As Integer
 		  // The font's ascent at that size, in pixels (the top of its line box is the ascender line): from CoreText on
-		  // macOS, from the font's hhea table on Windows (what CoreText reports)
+		  // macOS, from the font's hhea table on Windows and Linux (what CoreText reports)
 		  #If TargetMacOS
 		    Declare Function CTFontGetAscent Lib "CoreText" (font As Ptr) As Double
 		    Dim font As Ptr = SizedFont(fontName, sizePx)
 		    If font = Nil Then Return sizePx
 		    Return Round(CTFontGetAscent(font))
-		  #ElseIf TargetWindows
+		  #ElseIf TargetWindows Or TargetLinux
 		    If Not LoadTables(fontName) Then Return sizePx
 		    Return Round(mHheaAscender * sizePx / mUnitsPerEm)
 		  #Else
@@ -140,19 +140,7 @@ Protected Module FontRenderer
 		  Try
 		    Dim bs As BinaryStream = BinaryStream.Open(f, False)
 		    bs.LittleEndian = False
-		    Dim offsets() As Integer
-		    Dim tag As String = bs.Read(4, Encodings.ASCII)
-		    If tag = "ttcf" Then
-		      bs.Position = 8
-		      Dim n As Integer = bs.ReadUInt32
-		      For i As Integer = 0 To n - 1
-		        bs.Position = 12 + 4 * i
-		        offsets.Add(bs.ReadUInt32)
-		      Next
-		    Else
-		      offsets.Add(0)
-		    End If
-		    For Each sfnt As Integer In offsets
+		    For Each sfnt As Integer In SfntOffsets(bs)
 		      Dim name As String = FamilyNameAt(bs, sfnt)
 		      If name <> "" Then names.Add(name)
 		    Next
@@ -252,7 +240,7 @@ Protected Module FontRenderer
 	#tag Method, Flags = &h0
 		Function HasGlyph(fontName As String, cp As Integer) As Boolean
 		  // True when the font has a glyph of its own for the code point (not the "missing" box): asks CoreText on macOS,
-		  // reads the font's cmap on Windows
+		  // reads the font's cmap on Windows and Linux
 		  #If TargetMacOS
 		    Declare Function CTFontCreateWithName Lib "CoreText" (name As CFStringRef, size As Double, matrix As Ptr) As Ptr
 		    Declare Function CTFontGetGlyphsForCharacters Lib "CoreText" (font As Ptr, chars As Ptr, glyphs As Ptr, count As Integer) As Boolean
@@ -277,7 +265,7 @@ Protected Module FontRenderer
 		    End If
 		    If Not CTFontGetGlyphsForCharacters(mCoverageFont, chars, glyphs, count) Then Return False
 		    Return glyphs.UInt16Value(0) <> 0
-		  #ElseIf TargetWindows
+		  #ElseIf TargetWindows Or TargetLinux
 		    If Not LoadTables(fontName) Then Return False
 		    Return CmapGlyph(cp) <> 0
 		  #Else
@@ -290,7 +278,8 @@ Protected Module FontRenderer
 
 	#tag Method, Flags = &h21
 		Private Function LoadTables(fontName As String) As Boolean
-		  // Windows: reads the tables of a font that Render and HasGlyph need (cmap, head, hhea, hmtx), once per font
+		  // The tables of a font that Render and HasGlyph need (cmap, head, hhea, hmtx), once per font: from GDI on
+		  // Windows, from the font file on Linux
 		  #If TargetWindows
 		    Declare Function CreateFontW Lib "Gdi32" (height As Int32, width As Int32, escapement As Int32, orientation As Int32, weight As Int32, italic As UInt32, underline As UInt32, strikeOut As UInt32, charSet As UInt32, outPrecision As UInt32, clipPrecision As UInt32, quality As UInt32, pitchAndFamily As UInt32, faceName As WString) As Ptr
 		    Declare Function CreateCompatibleDC Lib "Gdi32" (hdc As Ptr) As Ptr
@@ -317,39 +306,32 @@ Protected Module FontRenderer
 		    Dim hmtx As MemoryBlock = FontTable("hmtx")
 		    Call SelectObject(mDC, previous)
 		    Call DeleteObject(font)
-		    If cmap = Nil Or head = Nil Or hhea = Nil Or hmtx = Nil Or head.Size < 20 Or hhea.Size < 36 Then Return False
-
-		    // The cmap subtable: full Unicode (format 12) first, else the BMP (format 4)
-		    Dim bestRank As Integer = 0
-		    Dim n As Integer = cmap.UInt16Value(2)
-		    For i As Integer = 0 To n - 1
-		      Dim platform As Integer = cmap.UInt16Value(4 + 8 * i)
-		      Dim encoding As Integer = cmap.UInt16Value(6 + 8 * i)
-		      Dim offset As Integer = cmap.UInt32Value(8 + 8 * i)
-		      If offset + 2 > cmap.Size Then Continue
-		      Dim fmt As Integer = cmap.UInt16Value(offset)
-		      Dim unicode As Boolean = platform = 0 Or (platform = 3 And (encoding = 1 Or encoding = 10))
-		      Dim rank As Integer = 0
-		      If unicode And fmt = 12 Then
-		        rank = 2
-		      ElseIf unicode And fmt = 4 Then
-		        rank = 1
-		      End If
-		      If rank > bestRank Then
-		        bestRank = rank
-		        mCmapOffset = offset
-		        mCmapFormat = fmt
-		      End If
-		    Next
-		    If bestRank = 0 Then Return False
-		    mCmap = cmap
-		    mHmtx = hmtx
-		    mUnitsPerEm = head.UInt16Value(18)
-		    mHheaAscender = hhea.Int16Value(4)
-		    mNumHMetrics = hhea.UInt16Value(34)
-		    If mUnitsPerEm = 0 Then Return False
-		    mTablesOK = True
-		    Return True
+		    mTablesOK = SetTables(cmap, head, hhea, hmtx)
+		    Return mTablesOK
+		  #ElseIf TargetLinux
+		    If fontName = mTablesFont Then Return mTablesOK
+		    mTablesFont = fontName
+		    mTablesOK = False
+		    mCmap = Nil
+		    mHmtx = Nil
+		    Dim path As String
+		    Dim index, sfnt As Integer
+		    If Not FaceInfo(fontName, path, index, sfnt) Then Return False
+		    Dim cmap, head, hhea, hmtx As MemoryBlock
+		    Try
+		      Dim bs As BinaryStream = BinaryStream.Open(New FolderItem(path, FolderItem.PathModes.Native), False)
+		      bs.LittleEndian = False
+		      cmap = FileTable(bs, sfnt, "cmap")
+		      head = FileTable(bs, sfnt, "head")
+		      hhea = FileTable(bs, sfnt, "hhea")
+		      hmtx = FileTable(bs, sfnt, "hmtx")
+		      bs.Close
+		    Catch e As IOException
+		      System.DebugLog("FontRenderer: can't read " + path + ": " + e.Message)
+		      Return False
+		    End Try
+		    mTablesOK = SetTables(cmap, head, hhea, hmtx)
+		    Return mTablesOK
 		  #Else
 		    #Pragma Unused fontName
 		    Return False
@@ -357,11 +339,108 @@ Protected Module FontRenderer
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function SetTables(cmap As MemoryBlock, head As MemoryBlock, hhea As MemoryBlock, hmtx As MemoryBlock) As Boolean
+		  // Keeps a font's tables (big-endian) for CmapGlyph, GlyphAdvance and the ascent: the cmap subtable to use (full
+		  // Unicode, format 12, first, else the BMP, format 4), units per em, ascender, number of advances. False when
+		  // the font lacks one of them
+		  If cmap = Nil Or head = Nil Or hhea = Nil Or hmtx = Nil Or head.Size < 20 Or hhea.Size < 36 Or cmap.Size < 4 Then Return False
+		  Dim bestRank As Integer = 0
+		  Dim n As Integer = cmap.UInt16Value(2)
+		  For i As Integer = 0 To n - 1
+		    If 12 + 8 * i > cmap.Size Then Exit
+		    Dim platform As Integer = cmap.UInt16Value(4 + 8 * i)
+		    Dim encoding As Integer = cmap.UInt16Value(6 + 8 * i)
+		    Dim offset As Integer = cmap.UInt32Value(8 + 8 * i)
+		    If offset + 2 > cmap.Size Then Continue
+		    Dim fmt As Integer = cmap.UInt16Value(offset)
+		    Dim unicode As Boolean = platform = 0 Or (platform = 3 And (encoding = 1 Or encoding = 10))
+		    Dim rank As Integer = 0
+		    If unicode And fmt = 12 Then
+		      rank = 2
+		    ElseIf unicode And fmt = 4 Then
+		      rank = 1
+		    End If
+		    If rank > bestRank Then
+		      bestRank = rank
+		      mCmapOffset = offset
+		      mCmapFormat = fmt
+		    End If
+		  Next
+		  If bestRank = 0 Then Return False
+		  mCmap = cmap
+		  mHmtx = hmtx
+		  mUnitsPerEm = head.UInt16Value(18)
+		  mHheaAscender = hhea.Int16Value(4)
+		  mNumHMetrics = hhea.UInt16Value(34)
+		  Return mUnitsPerEm <> 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function FileTable(bs As BinaryStream, sfnt As Integer, tag As String) As MemoryBlock
+		  // A table of the face whose table directory is at sfnt in a font file (big-endian), or Nil (Linux, which has
+		  // no GetFontData)
+		  bs.Position = sfnt + 4
+		  Dim numTables As Integer = bs.ReadUInt16
+		  For i As Integer = 0 To numTables - 1
+		    bs.Position = sfnt + 12 + 16 * i
+		    If bs.Read(4, Encodings.ASCII) = tag Then
+		      bs.Position = sfnt + 12 + 16 * i + 8
+		      Dim offset As Integer = bs.ReadUInt32
+		      Dim length As Integer = bs.ReadUInt32
+		      bs.Position = offset
+		      Dim data As MemoryBlock = bs.Read(length)
+		      If data = Nil Or data.Size <> length Then Return Nil
+		      data.LittleEndian = False
+		      Return data
+		    End If
+		  Next
+		  Return Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function FaceInfo(fontName As String, ByRef path As String, ByRef index As Integer, ByRef sfnt As Integer) As Boolean
+		  // Linux: the file, face index and table directory of a face RegisterFontFile named fontName (kept in mFaces as
+		  // path, tab, face index, tab, table directory offset)
+		  If mFaces = Nil Or Not mFaces.HasKey(fontName) Then Return False
+		  Dim tab As String = Chr(9)
+		  Dim parts() As String = mFaces.Value(fontName).StringValue.Split(tab)
+		  If parts.Count <> 3 Then Return False
+		  path = parts(0)
+		  index = parts(1).ToInteger
+		  sfnt = parts(2).ToInteger
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SfntOffsets(bs As BinaryStream) As Integer()
+		  // Where each face's table directory starts in a font file: several in a collection (.ttc), else one at 0
+		  Dim offsets() As Integer
+		  bs.Position = 0
+		  Dim tag As String = bs.Read(4, Encodings.ASCII)
+		  If tag = "ttcf" Then
+		    bs.Position = 8
+		    Dim n As Integer = bs.ReadUInt32
+		    For i As Integer = 0 To n - 1
+		      bs.Position = 12 + 4 * i
+		      offsets.Add(bs.ReadUInt32)
+		    Next
+		  Else
+		    offsets.Add(0)
+		  End If
+		  Return offsets
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function RegisterFontFile(f As FolderItem, faces() As String) As Boolean
 		  // Makes a font file usable by this app (not installed for other apps). faces receives the name to use as a
 		  // FontName for each face in the file (a .ttc holds several): its PostScript name, which CoreText registers for
-		  // the process, on macOS; its family name, which GDI adds privately, on Windows
+		  // the process, on macOS; its family name, which GDI adds privately, on Windows; on Linux its family name too,
+		  // numbered when another face has it, kept with the file and face index for FreeType
 		  #If TargetMacOS
 		    Declare Function CFURLCreateWithFileSystemPath Lib "CoreFoundation" (allocator As Ptr, path As CFStringRef, style As Integer, isDir As Boolean) As Ptr
 		    Declare Function CTFontManagerRegisterFontsForURL Lib "CoreText" (url As Ptr, scope As Integer, errorOut As Ptr) As Boolean
@@ -400,6 +479,41 @@ Protected Module FontRenderer
 		    // A file added again may have changed: read its tables again
 		    mTablesFont = ""
 		    Return faces.Count > 0
+		  #ElseIf TargetLinux
+		    If f = Nil Or Not f.Exists Then Return False
+		    Dim offsets() As Integer
+		    Dim names() As String
+		    Try
+		      Dim bs As BinaryStream = BinaryStream.Open(f, False)
+		      bs.LittleEndian = False
+		      offsets = SfntOffsets(bs)
+		      For Each sfnt As Integer In offsets
+		        names.Add(FamilyNameAt(bs, sfnt))
+		      Next
+		      bs.Close
+		    Catch e As IOException
+		      System.DebugLog("FontRenderer: can't read " + f.NativePath + ": " + e.Message)
+		      Return False
+		    End Try
+		    If mFaces = Nil Then mFaces = New Dictionary
+		    Dim tab As String = Chr(9)
+		    For i As Integer = 0 To offsets.LastIndex
+		      Dim info As String = f.NativePath + tab + Str(i) + tab + Str(offsets(i))
+		      Dim family As String = If(names(i) <> "", names(i), f.Name)
+		      // The faces of a family (Regular, Bold...) share its name: the others get a number
+		      Dim key As String = family
+		      Dim n As Integer = 1
+		      While mFaces.HasKey(key) And mFaces.Value(key).StringValue <> info
+		        n = n + 1
+		        key = family + " " + Str(n)
+		      Wend
+		      mFaces.Value(key) = info
+		      If faces.IndexOf(key) < 0 Then faces.Add(key)
+		    Next
+		    // A file opened again may have changed: read its tables and open it again
+		    mTablesFont = ""
+		    mSizedFontName = ""
+		    Return faces.Count > 0
 		  #Else
 		    #Pragma Unused f
 		    #Pragma Unused faces
@@ -411,8 +525,9 @@ Protected Module FontRenderer
 	#tag Method, Flags = &h0
 		Function Render(fontName As String, sizePx As Integer, cp As Integer) As GlyphBitmap
 		  // The glyph of a code point at sizePx pixels, drawn with anti-aliasing and font smoothing off (1 bit per pixel,
-		  // like FreeType's mono mode), then cropped to its ink: by CoreText on macOS, by GDI on Windows. XOffset is from
-		  // the pen, YOffset from the ascender line (the caller moves it to its line box)
+		  // like FreeType's mono mode), then cropped to its ink: by CoreText on macOS, by GDI on Windows, by FreeType's
+		  // mono mode on Linux (as mkfontpack.py, through Pillow). XOffset is from the pen, YOffset from the ascender line
+		  // (the caller moves it to its line box)
 		  #If TargetMacOS
 		    Declare Function CGColorSpaceCreateDeviceGray Lib "CoreGraphics" () As Ptr
 		    Declare Function CGBitmapContextCreate Lib "CoreGraphics" (data As Ptr, width As Integer, height As Integer, bitsPerComponent As Integer, bytesPerRow As Integer, space As Ptr, bitmapInfo As UInt32) As Ptr
@@ -542,6 +657,51 @@ Protected Module FontRenderer
 		    full.YOffset = -margin // the bitmap's top is margin pixels above the ascender line
 		    full.Crop
 		    Return full
+		  #ElseIf TargetLinux
+		    Declare Function FT_Load_Glyph Lib "libfreetype.so.6" (face As Ptr, glyphIndex As UInt32, flags As Int32) As Int32
+
+		    Dim result As New GlyphBitmap(0, 0)
+		    result.CodePoint = cp
+		    If Not LoadTables(fontName) Then Return result
+		    Dim gid As Integer = CmapGlyph(cp)
+		    If gid = 0 Then Return result
+		    // From hmtx, unhinted and rounded, like CoreText's advance
+		    result.Advance = Round(GlyphAdvance(gid) * sizePx / mUnitsPerEm)
+		    Dim face As Ptr = SizedFont(fontName, sizePx)
+		    If face = Nil Then Return result
+		    // FT_LOAD_RENDER (4) | FT_LOAD_MONOCHROME (&h1000) | FT_LOAD_TARGET_MONO (&h20000): 1 bit per pixel, hinted for it
+		    If FT_Load_Glyph(face, gid, &h21004) <> 0 Then Return result
+
+		    // FreeType's structures, read in place (64-bit layout, the same on x86_64 and ARM64; measured with the
+		    // FreeType 2.14 headers): FT_FaceRec.glyph at 152; in the glyph slot, its FT_Bitmap at 152 (rows, width,
+		    // pitch, buffer at +16, pixel_mode at +26), bitmap_left at 192 and bitmap_top at 196
+		    Dim slot As Ptr = face.Ptr(152)
+		    If slot = Nil Then Return result
+		    Dim bmpRows As Integer = slot.UInt32(152)
+		    Dim bmpWidth As Integer = slot.UInt32(156)
+		    Dim pitch As Integer = slot.Int32(160)
+		    Dim buffer As Ptr = slot.Ptr(168)
+		    Dim pixelMode As Integer = slot.Byte(178)
+		    Dim bmpLeft As Integer = slot.Int32(192)
+		    Dim bmpTop As Integer = slot.Int32(196)
+		    If bmpRows = 0 Or bmpWidth = 0 Or buffer = Nil Or pixelMode <> 1 Then Return result // no ink (a space); 1: FT_PIXEL_MODE_MONO
+
+		    // The bits, the leftmost pixel in the high bit; a negative pitch stores the rows from the bottom
+		    Dim full As New GlyphBitmap(bmpWidth, bmpRows)
+		    For y As Integer = 0 To bmpRows - 1
+		      Dim rowStart As Integer = If(pitch >= 0, y * pitch, (bmpRows - 1 - y) * -pitch)
+		      For x As Integer = 0 To bmpWidth - 1
+		        Dim b As Integer = buffer.Byte(rowStart + x \ 8)
+		        If Bitwise.BitAnd(b, Bitwise.ShiftRight(&h80, x Mod 8)) <> 0 Then full.Pixel(x, y) = True
+		      Next
+		    Next
+		    full.CodePoint = cp
+		    full.Advance = result.Advance
+		    full.XOffset = bmpLeft
+		    // bitmap_top is from the baseline up; YOffset from the ascender line down
+		    full.YOffset = Round(mHheaAscender * sizePx / mUnitsPerEm) - bmpTop
+		    full.Crop
+		    Return full
 		  #Else
 		    #Pragma Unused fontName
 		    #Pragma Unused sizePx
@@ -555,7 +715,8 @@ Protected Module FontRenderer
 	#tag Method, Flags = &h21
 		Private Function SizedFont(fontName As String, sizePx As Integer) As Ptr
 		  // The font at exactly sizePx (cached: the renderer asks for the same one thousands of times): a CoreText font
-		  // on macOS; on Windows a GDI font without anti-aliasing, or Nil when GDI would give another face
+		  // on macOS; on Windows a GDI font without anti-aliasing, or Nil when GDI would give another face; on Linux a
+		  // FreeType face (FT_Face) set to sizePx pixels per em, or Nil
 		  #If TargetMacOS
 		    Declare Function CTFontCreateWithName Lib "CoreText" (name As CFStringRef, size As Double, matrix As Ptr) As Ptr
 		    If fontName <> mSizedFontName Or sizePx <> mSizedFontSize Then
@@ -582,6 +743,33 @@ Protected Module FontRenderer
 		        mSizedFont = Nil
 		      End If
 		      mSizedFontName = fontName
+		      mSizedFontSize = sizePx
+		    End If
+		    Return mSizedFont
+		  #ElseIf TargetLinux
+		    Declare Function FT_Init_FreeType Lib "libfreetype.so.6" (ByRef library As Ptr) As Int32
+		    Declare Function FT_New_Face Lib "libfreetype.so.6" (library As Ptr, path As CString, faceIndex As Int64, ByRef face As Ptr) As Int32
+		    Declare Function FT_Set_Pixel_Sizes Lib "libfreetype.so.6" (face As Ptr, width As UInt32, height As UInt32) As Int32
+		    Declare Function FT_Done_Face Lib "libfreetype.so.6" (face As Ptr) As Int32
+
+		    If fontName <> mSizedFontName Then
+		      If mSizedFont <> Nil Then Call FT_Done_Face(mSizedFont)
+		      mSizedFont = Nil
+		      mSizedFontName = fontName
+		      mSizedFontSize = 0
+		      If mFreeType = Nil Then
+		        Dim library As Ptr
+		        If FT_Init_FreeType(library) = 0 Then mFreeType = library
+		      End If
+		      Dim path As String
+		      Dim index, sfnt As Integer
+		      If mFreeType = Nil Or Not FaceInfo(fontName, path, index, sfnt) Then Return Nil
+		      Dim face As Ptr
+		      If FT_New_Face(mFreeType, path.ConvertEncoding(Encodings.UTF8), index, face) = 0 Then mSizedFont = face
+		    End If
+		    If mSizedFont <> Nil And sizePx <> mSizedFontSize Then
+		      // Pixels per em, as CoreText's size (and Pillow's, in mkfontpack.py)
+		      If FT_Set_Pixel_Sizes(mSizedFont, 0, sizePx) <> 0 Then Return Nil
 		      mSizedFontSize = sizePx
 		    End If
 		    Return mSizedFont
@@ -627,6 +815,14 @@ Protected Module FontRenderer
 
 	#tag Property, Flags = &h21
 		Private mDC As Ptr
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFaces As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFreeType As Ptr
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
