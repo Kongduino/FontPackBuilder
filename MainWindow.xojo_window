@@ -716,6 +716,9 @@ End
 		  AddFontRow("main.font.fusion", "fusion-pixel-12px-proportional-zh_hk.ttf", _
 		  "OFL-1.1", "Fusion Pixel Font 12px zh_hk (TakWolf)")
 		  pmFont.AddRow(T("main.font.other")) // its tag stays Nil
+		  // Add BDF font...: merges another BDF font into the one in use (Shinonome's kanji and half-width katakana fonts)
+		  pmFont.AddRow(T("main.font.addBDF"))
+		  pmFont.RowTagAt(pmFont.LastAddedRowIndex) = New Dictionary("key" : "main.font.addBDF", "action" : "addBDF")
 		  
 		  lbSets.ColumnTypeAt(0) = DesktopListBox.CellTypes.CheckBox
 		  lbSets.HasHeader = True
@@ -769,6 +772,86 @@ End
 		  d.Value("source") = source
 		  pmFont.RowTagAt(pmFont.LastAddedRowIndex) = d
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AddBDFFont()
+		  // Add BDF font...: another BDF font's characters join the BDF font in use, for those it lacks (the first font
+		  // wins), e.g. Shinonome's JIS X 0201 half-width katakana with its JIS X 0208 kanji. The font's row keeps the
+		  // file, so choosing the row again loads both
+		  mRelabeling = True
+		  pmFont.SelectedRowIndex = mPreviousFontRow
+		  mRelabeling = False
+		  If mBDF = Nil Then
+		    SetStatus("status.addBDFNeedsBDF")
+		    Return
+		  End If
+		  Dim ft As New FileType
+		  ft.Name = T("main.fileType.fonts")
+		  ft.Extensions = "bdf"
+		  Dim f As FolderItem = FolderItem.ShowOpenFileDialog(ft)
+		  If f = Nil Then Return
+		  Dim errorText As String
+		  If Not mBDF.Load(f, errorText) Then
+		    System.DebugLog("FontPackBuilder: " + errorText)
+		    SetStatus("status.addBDFFailed", "file", f.Name)
+		    Return
+		  End If
+		  
+		  Dim tag As Variant = pmFont.RowTagAt(mPreviousFontRow)
+		  If tag IsA Dictionary Then
+		    Dim d As Dictionary = tag
+		    d.Value("extras") = If(d.HasKey("extras"), d.Value("extras").StringValue + Chr(10), "") + f.NativePath
+		    d.Value("label") = d.Lookup("label", "").StringValue + " + " + f.Name
+		    RelabelFontRow(mPreviousFontRow, d.Value("label"))
+		  End If
+		  SetStatus("")
+		  BDFChanged
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BDFChanged()
+		  // The BDF font in use got more characters: the packs rendered before lack them
+		  mFontSource = mBDF.FileNames
+		  mPacks.RemoveAll
+		  mPreviewPack = Nil
+		  btnSave.Enabled = False
+		  ShowFontInfo
+		  UpdateSelection
+		  cvPreview.Refresh
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LoadExtraBDFs(d As Dictionary)
+		  // The BDF fonts added to a row's font (Add BDF font...), after it is loaded again
+		  If mBDF = Nil Or Not d.HasKey("extras") Then Return
+		  For Each path As String In d.Value("extras").StringValue.Split(Chr(10))
+		    Dim errorText As String
+		    Dim f As FolderItem
+		    Try
+		      f = New FolderItem(path, FolderItem.PathModes.Native)
+		    Catch e As RuntimeException
+		      f = Nil
+		    End Try
+		    If f = Nil Or Not f.Exists Or Not mBDF.Load(f, errorText) Then
+		      System.DebugLog("FontPackBuilder: can't add " + path + " " + errorText)
+		      SetStatus("status.addBDFFailed", "file", If(f <> Nil, f.Name, path))
+		    End If
+		  Next
+		  BDFChanged
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function OtherFontRow() As Integer
+		  // The font menu's Other font file... row (the one without a tag): chosen files go above it
+		  For row As Integer = 0 To pmFont.RowCount - 1
+		    If pmFont.RowTagAt(row) = Nil Then Return row
+		  Next
+		  Return pmFont.RowCount
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1063,7 +1146,7 @@ End
 		  ElseIf mFaceCount > 1 Then
 		    lblFontInfo.Text = T("main.font.infoFaces", "face", mFontName, "file", mFontFile.Name, "count", Str(mFaceCount))
 		  Else
-		    lblFontInfo.Text = T("main.font.info", "face", mFontName, "file", mFontFile.Name)
+		    lblFontInfo.Text = T("main.font.info", "face", mFontName, "file", If(mBDF <> Nil, mBDF.FileNames.ReplaceAll(",", ", "), mFontFile.Name))
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1316,9 +1399,14 @@ End
 		  Dim tag As Variant = pmFont.RowTagAt(row)
 		  If tag IsA Dictionary Then
 		    Dim d As Dictionary = tag
+		    If d.HasKey("action") Then
+		      AddBDFFont
+		      Return
+		    End If
 		    mPreviousFontRow = row
 		    If d.HasKey("item") Then
 		      LoadFont(d.Value("item"), d.Value("license"), d.Value("source"))
+		      LoadExtraBDFs(d)
 		    Else
 		      Dim fonts As FolderItem = CharSets.ResourceFile("Fonts")
 		      LoadFont(If(fonts <> Nil, fonts.Child(d.Value("file").StringValue), Nil), d.Value("license"), d.Value("source"))
@@ -1339,13 +1427,15 @@ End
 		  d.Value("item") = f
 		  d.Value("license") = ""
 		  d.Value("source") = f.Name
-		  pmFont.AddRowAt(pmFont.RowCount - 1, f.Name)
-		  pmFont.RowTagAt(pmFont.RowCount - 2) = d
+		  d.Value("label") = f.Name
+		  Dim newRow As Integer = OtherFontRow
+		  pmFont.AddRowAt(newRow, f.Name)
+		  pmFont.RowTagAt(newRow) = d
 		  // Selecting the row from inside this event doesn't run it again: the file is loaded here
 		  mRelabeling = True
-		  pmFont.SelectedRowIndex = pmFont.RowCount - 2
+		  pmFont.SelectedRowIndex = newRow
 		  mRelabeling = False
-		  mPreviousFontRow = pmFont.RowCount - 2
+		  mPreviousFontRow = newRow
 		  LoadFont(f, "", f.Name)
 		End Sub
 	#tag EndEvent
