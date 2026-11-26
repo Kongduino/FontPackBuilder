@@ -6,6 +6,7 @@ Class=App;App.xojo_code;&h000000000187AFFF;&h0000000000000000;false
 DesktopWindow=MainWindow;MainWindow.xojo_window;&h000000003AE717FF;&h0000000000000000;false
 MenuBar=MainMenuBar;MainMenuBar.xojo_menu;&h000000007809D7FF;&h0000000000000000;false
 Class=GlyphBitmap;GlyphBitmap.xojo_code;&h00000000658F5969;&h0000000000000000;false
+Class=BDFFont;BDFFont.xojo_code;&h000000005BDF0A12;&h0000000000000000;false
 Module=MFPWriter;MFPWriter.xojo_code;&h0000000018A69F47;&h0000000000000000;false
 Module=CharSets;CharSets.xojo_code;&h000000003215E64C;&h0000000000000000;false
 Module=FontRenderer;FontRenderer.xojo_code;&h0000000069D880A6;&h0000000000000000;false

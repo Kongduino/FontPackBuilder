@@ -51,6 +51,7 @@
   "status.resourcesMissing": "缺少資源：找不到 CharSets.txt 和 Blocks.txt",
   "status.chooseFont": "請先選擇字型",
   "status.chooseSize": "請選擇字型包的大小：12、16 或 24 px",
+  "status.bdfSize": "這個 BDF 字型是 {size} px：請選擇 {size} px",
   "status.rangesError": "範圍有錯誤：請輸入十六進位數值或範圍，例如 1000-109F, 4E00",
   "status.selectChars": "請選擇字元：字集、區段或範圍",
   "status.progress": "{size} px：{done} / {total}",

@@ -822,6 +822,22 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function FontGlyph(sizePx As Integer, cp As Integer) As GlyphBitmap
+		  // The glyph of a code point in the font in use: from the BDF font as it is, else rendered at sizePx
+		  If mBDF <> Nil Then Return mBDF.Render(cp)
+		  Return FontRenderer.Render(mFontName, sizePx, cp)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function FontHasGlyph(cp As Integer) As Boolean
+		  // True when the font in use (a BDF font, else the registered one) has a glyph for the code point
+		  If mBDF <> Nil Then Return mBDF.HasGlyph(cp)
+		  Return FontRenderer.HasGlyph(mFontName, cp)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub GlyphEdited(sizePx As Integer, g As GlyphBitmap)
 		  // The glyph editor's result: kept (re-applied after each render) and put in the pack of that size
@@ -846,16 +862,32 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub LoadFont(f As FolderItem, license As String, source As String)
-		  // Makes the font usable (CoreText) and takes its first face
+		  // Makes the font usable (CoreText) and takes its first face; a BDF bitmap font is read by BDFFont
 		  Dim faces() As String
 		  mFontName = ""
 		  mFontError = ""
+		  mBDF = Nil
 		  mEdits.RemoveAll // edits belong to the font they were made on
 		  UpdateEdits
 		  mPacks.RemoveAll
 		  mPreviewPack = Nil
 		  btnSave.Enabled = False
-		  If f = Nil Or Not FontRenderer.RegisterFontFile(f, faces) Then
+		  If f <> Nil And f.Name.EndsWith(".bdf") Then
+		    // A BDF bitmap font: its pixels as they are, at its own size (chosen in the size menu)
+		    Dim b As New BDFFont
+		    Dim errorText As String
+		    If Not b.Load(f, errorText) Then
+		      System.DebugLog("FontPackBuilder: " + errorText)
+		      mFontError = f.Name
+		      ShowFontInfo
+		      UpdateSelection
+		      cvPreview.Refresh
+		      Return
+		    End If
+		    mBDF = b
+		    faces.Add(b.FaceName)
+		    SelectBDFSize
+		  ElseIf f = Nil Or Not FontRenderer.RegisterFontFile(f, faces) Then
 		    mFontError = If(f <> Nil, f.Name, "?")
 		    ShowFontInfo
 		    UpdateSelection
@@ -988,6 +1020,24 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SelectBDFSize()
+		  // A BDF font is made for one size: the size menu gets it (an 8 or 14 px font isn't one of 12, 16 and 24) and
+		  // selects it
+		  Dim sizePx As Integer = mBDF.PixelSize
+		  If sizePx <= 0 Then Return
+		  For row As Integer = 0 To pmSize.RowCount - 1
+		    If pmSize.RowTagAt(row).IntegerValue = sizePx Then
+		      pmSize.SelectedRowIndex = row
+		      Return
+		    End If
+		  Next
+		  pmSize.AddRow(Str(sizePx) + " px")
+		  pmSize.RowTagAt(pmSize.LastAddedRowIndex) = sizePx
+		  pmSize.SelectedRowIndex = pmSize.LastAddedRowIndex
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub SetStatus(key As String, ParamArray args() As String)
 		  // The status line: a text of Strings, kept as its key and values so that it's shown again in another language
 		  // (kRenderedStatus: the packs just rendered); "" clears it
@@ -1061,7 +1111,7 @@ End
 		  Dim inFont As Integer = 0
 		  If mFontName <> "" Then
 		    For Each cp As Integer In cps
-		      If FontRenderer.HasGlyph(mFontName, cp) Then inFont = inFont + 1
+		      If FontHasGlyph(cp) Then inFont = inFont + 1
 		    Next
 		  End If
 		  lblSelection.Text = T(If(ok, "main.selection", "main.selection.rangeError"), "count", Format(cps.Count, "#,##0"), _
@@ -1078,7 +1128,7 @@ End
 		  For Each sizePx As Integer In mWorkSizes
 		    Dim pack As New RenderedPack(sizePx)
 		    pack.FontName = mFontName
-		    pack.FontFile = mFontFile.Name
+		    pack.FontFile = If(mBDF <> Nil, mBDF.FileNames, mFontFile.Name)
 		    pack.License = mFontLicense
 		    pack.Source = mFontSource
 		    
@@ -1087,8 +1137,8 @@ End
 		    Dim bottom As Integer = -100000
 		    // H g j y, then 中 あ 한
 		    For Each cp As Integer In Array(&h48, &h67, &h6A, &h79, &h4E2D, &h3042, &hD55C)
-		      If Not FontRenderer.HasGlyph(mFontName, cp) Then Continue
-		      Dim g As GlyphBitmap = FontRenderer.Render(mFontName, sizePx, cp)
+		      If Not FontHasGlyph(cp) Then Continue
+		      Dim g As GlyphBitmap = FontGlyph(sizePx, cp)
 		      If g.Height = 0 Then Continue
 		      top = Min(top, g.YOffset)
 		      bottom = Max(bottom, g.YOffset + g.Height)
@@ -1099,8 +1149,8 @@ End
 		        sender.AddUserInterfaceUpdate(New Dictionary("stopped" : True))
 		        Return
 		      End If
-		      If FontRenderer.HasGlyph(mFontName, cp) Then
-		        pack.Add(FontRenderer.Render(mFontName, sizePx, cp))
+		      If FontHasGlyph(cp) Then
+		        pack.Add(FontGlyph(sizePx, cp))
 		      Else
 		        pack.Missing = pack.Missing + 1
 		      End If
@@ -1127,7 +1177,7 @@ End
 		      If g.Height > 0 Then g.YOffset = g.YOffset - top
 		    Next
 		    pack.LineHeight = bottom - top + 1 // one blank pixel between lines
-		    pack.Baseline = FontRenderer.Ascent(mFontName, sizePx) - top
+		    pack.Baseline = If(mBDF <> Nil, mBDF.Ascent, FontRenderer.Ascent(mFontName, sizePx)) - top
 		    mNewPacks.Add(pack)
 		  Next
 		  sender.AddUserInterfaceUpdate(New Dictionary("done" : True))
@@ -1175,6 +1225,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mEdits As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBDF As BDFFont
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1275,7 +1329,7 @@ End
 		  // Other font file...: added above it, then selected
 		  Dim ft As New FileType
 		  ft.Name = T("main.fileType.fonts")
-		  ft.Extensions = "ttf;otf;ttc;otc"
+		  ft.Extensions = "ttf;otf;ttc;otc;bdf"
 		  Dim f As FolderItem = FolderItem.ShowOpenFileDialog(ft)
 		  If f = Nil Then
 		    pmFont.SelectedRowIndex = mPreviousFontRow
@@ -1353,6 +1407,10 @@ End
 		  End If
 		  Dim sizes() As Integer
 		  sizes.Add(pmSize.RowTagAt(pmSize.SelectedRowIndex).IntegerValue)
+		  If mBDF <> Nil And sizes(0) <> mBDF.PixelSize Then
+		    SetStatus("status.bdfSize", "size", Str(mBDF.PixelSize))
+		    Return
+		  End If
 		  Dim ok As Boolean
 		  Dim cps() As Integer = SelectedCodePoints(ok)
 		  If Not ok Then

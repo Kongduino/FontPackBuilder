@@ -7,7 +7,7 @@ Firmware that installs and uses the packs, with Chinese stroke and Korean (ë‚˜ëž
 [meshtastic-fontpacks](https://github.com/Kongduino/meshtastic-fontpacks), a fork of the Meshtastic firmware (branch
 `font-packs`).
 
-- **Font:** GNU Unifont (16 px) or Fusion Pixel (12 px, Hong Kong forms), both bundled, or any `.ttf`/`.otf`/`.ttc`.
+- **Font:** GNU Unifont (16 px) or Fusion Pixel (12 px, Hong Kong forms), both bundled, or any `.ttf`/`.otf`/`.ttc`, or a `.bdf` bitmap font. A BDF font's pixels are copied as they are, at its own size (the size menu gets it); it can be Unicode, JIS X 0208 or JIS X 0201 encoded, as in `mkfontpack.py`. Japanese bitmap fonts made for small screens work this way: [k8x12](https://littlelimit.net/k8x12.htm) (8 x 12) for Japanese glyph forms on 128 x 64 OLEDs, Misaki (8 x 8), Shinonome (12, 14, 16 px).
 - **Characters:** named sets (GB2312, Big5, HKSCS, JIS X 0208, KS X 1001, kana...), Unicode blocks (with a filter),
   and hex ranges (`1000-109F, U+4E00`). The app counts the selected characters and those the font has.
 - **Size:** 12, 16 or 24 px, one per pack, chosen in the menu before rendering. 24 px is for large screens such as the LilyGo T5 E-Paper's 960 x 540; it needs an outline font (`.ttf`/`.otf`), e.g. [Noto Sans CJK](https://github.com/notofonts/noto-cjk), as the bundled fonts are pixel fonts made for 12 and 16 px.
@@ -70,7 +70,9 @@ Project files (font, selection, edits), compressed transfers, Linux.
 
 The firmware's CJK line breaking (kinsoku) uses the rules and character lists from
 [meshtastic/firmware#12469](https://github.com/meshtastic/firmware/pull/12469) (Japanese text on OLED displays) by
-[mntszk](https://github.com/mntszk). The bundled fonts are credited under Licence.
+[mntszk](https://github.com/mntszk), who also wrote the BDF font input (in
+[MeshtasticFontPacks#1](https://github.com/Kongduino/MeshtasticFontPacks/pull/1), ported here). The bundled fonts are
+credited under Licence.
 
 ## Licence
 

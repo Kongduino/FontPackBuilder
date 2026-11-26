@@ -51,6 +51,7 @@
   "status.resourcesMissing": "Resources missing: CharSets.txt and Blocks.txt not found",
   "status.chooseFont": "Choose a font first",
   "status.chooseSize": "Choose the pack's size: 12, 16 or 24 px",
+  "status.bdfSize": "This BDF font is {size} px: choose {size} px",
   "status.rangesError": "The ranges have an error: hex values or ranges, e.g. 1000-109F, 4E00",
   "status.selectChars": "Select some characters: a set, a block or a range",
   "status.progress": "{size} px: {done} of {total}",
