@@ -11,20 +11,20 @@ Begin DesktopWindow MainWindow
    HasMaximizeButton=   True
    HasMinimizeButton=   True
    HasTitleBar     =   True
-   Height          =   468
+   Height          =   710
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
-   MaximumWidth    =   900
+   MaximumWidth    =   748
    MenuBar         =   2013911039
    MenuBarVisible  =   False
    MinimumHeight   =   468
-   MinimumWidth    =   696
+   MinimumWidth    =   748
    Resizeable      =   True
    Title           =   "FontPackBuilder"
    Type            =   0
    Visible         =   True
-   Width           =   696
+   Width           =   748
    Begin DesktopPopupMenu pmFont
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -84,7 +84,7 @@ Begin DesktopWindow MainWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   264
+      Width           =   316
    End
    Begin DesktopPopupMenu pmSize
       AllowAutoDeactivate=   True
@@ -97,7 +97,7 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
-      Left            =   556
+      Left            =   608
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -138,12 +138,12 @@ Begin DesktopWindow MainWindow
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   60
+      Height          =   302
       Index           =   -2147483648
       InitialValue    =   "checkbox	name	count"
       Italic          =   False
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
@@ -159,7 +159,7 @@ Begin DesktopWindow MainWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   307
+      Width           =   350
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -186,11 +186,11 @@ Begin DesktopWindow MainWindow
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   295
+      Height          =   537
       Index           =   -2147483648
       InitialValue    =   "checkbox	range	block name"
       Italic          =   False
-      Left            =   339
+      Left            =   382
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -207,7 +207,7 @@ Begin DesktopWindow MainWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   337
+      Width           =   346
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -230,11 +230,11 @@ Begin DesktopWindow MainWindow
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
       MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
@@ -246,12 +246,12 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   124
+      Top             =   366
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   307
+      Width           =   350
    End
    Begin DesktopTextField tfRanges
       AllowAutoDeactivate=   True
@@ -270,7 +270,7 @@ Begin DesktopWindow MainWindow
       Hint            =   "Ranges (hex): 1000-109F, 4E00"
       Index           =   -2147483648
       Italic          =   False
-      Left            =   339
+      Left            =   382
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -287,12 +287,12 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   359
+      Top             =   601
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   337
+      Width           =   346
    End
    Begin DesktopLabel lblSelection
       AllowAutoDeactivate=   True
@@ -305,11 +305,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
       Multiline       =   False
       Scope           =   0
       Selectable      =   False
@@ -320,11 +320,11 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   158
+      Top             =   400
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   307
+      Width           =   350
    End
    Begin DesktopTextField tfPackName
       AllowAutoDeactivate=   True
@@ -344,11 +344,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
       MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
@@ -360,12 +360,12 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   190
+      Top             =   432
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   307
+      Width           =   350
    End
    Begin DesktopButton btnRender
       AllowAutoDeactivate=   True
@@ -393,7 +393,7 @@ Begin DesktopWindow MainWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   428
+      Top             =   670
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -424,7 +424,7 @@ Begin DesktopWindow MainWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   428
+      Top             =   670
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -451,7 +451,7 @@ Begin DesktopWindow MainWindow
       TabIndex        =   12
       TabPanelIndex   =   0
       Tooltip         =   ""
-      Top             =   428
+      Top             =   670
       Transparent     =   False
       Value           =   50.0
       Visible         =   True
@@ -487,7 +487,7 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   396
+      Top             =   638
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -511,11 +511,11 @@ Begin DesktopWindow MainWindow
       Index           =   -2147483648
       Italic          =   False
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
       MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
@@ -527,12 +527,12 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   224
+      Top             =   466
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Visible         =   True
-      Width           =   307
+      Width           =   350
    End
    Begin DesktopCanvas cvPreview
       AllowAutoDeactivate=   True
@@ -548,16 +548,16 @@ Begin DesktopWindow MainWindow
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
       Scope           =   0
       TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   255
+      Top             =   497
       Transparent     =   False
       Visible         =   True
-      Width           =   307
+      Width           =   350
    End
    Begin DesktopTextField tfEditChar
       AllowAutoDeactivate=   True
@@ -576,7 +576,7 @@ Begin DesktopWindow MainWindow
       Hint            =   "Character or U+hex"
       Index           =   -2147483648
       Italic          =   False
-      Left            =   339
+      Left            =   382
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -593,7 +593,7 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   396
+      Top             =   638
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -613,7 +613,7 @@ Begin DesktopWindow MainWindow
       Height          =   28
       Index           =   -2147483648
       Italic          =   False
-      Left            =   491
+      Left            =   556
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -625,7 +625,7 @@ Begin DesktopWindow MainWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   396
+      Top             =   638
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -657,7 +657,7 @@ Begin DesktopWindow MainWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   428
+      Top             =   670
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -676,7 +676,7 @@ Begin DesktopWindow MainWindow
       Height          =   28
       Index           =   -2147483648
       Italic          =   False
-      Left            =   596
+      Left            =   648
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -688,7 +688,7 @@ Begin DesktopWindow MainWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   396
+      Top             =   638
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -994,6 +994,24 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SelectBDFSize()
+		  // A BDF font is made for one size: the size menu gets it (an 8 or 14 px font isn't one of 12, 16 and 24) and
+		  // selects it
+		  Dim sizePx As Integer = mBDF.PixelSize
+		  If sizePx <= 0 Then Return
+		  For row As Integer = 0 To pmSize.RowCount - 1
+		    If pmSize.RowTagAt(row).IntegerValue = sizePx Then
+		      pmSize.SelectedRowIndex = row
+		      Return
+		    End If
+		  Next
+		  pmSize.AddRow(Str(sizePx) + " px")
+		  pmSize.RowTagAt(pmSize.LastAddedRowIndex) = sizePx
+		  pmSize.SelectedRowIndex = pmSize.LastAddedRowIndex
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function SelectedCodePoints(ByRef rangesOK As Boolean) As Integer()
 		  // The selected characters: checked sets and blocks, and the typed ranges; sorted, without duplicates, and
 		  // without the control characters, surrogates and non-characters
@@ -1017,24 +1035,6 @@ End
 		  Next
 		  Return out
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SelectBDFSize()
-		  // A BDF font is made for one size: the size menu gets it (an 8 or 14 px font isn't one of 12, 16 and 24) and
-		  // selects it
-		  Dim sizePx As Integer = mBDF.PixelSize
-		  If sizePx <= 0 Then Return
-		  For row As Integer = 0 To pmSize.RowCount - 1
-		    If pmSize.RowTagAt(row).IntegerValue = sizePx Then
-		      pmSize.SelectedRowIndex = row
-		      Return
-		    End If
-		  Next
-		  pmSize.AddRow(Str(sizePx) + " px")
-		  pmSize.RowTagAt(pmSize.LastAddedRowIndex) = sizePx
-		  pmSize.SelectedRowIndex = pmSize.LastAddedRowIndex
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1220,15 +1220,15 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mBDF As BDFFont
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCheckedBlocks As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mEdits As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mBDF As BDFFont
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1341,7 +1341,12 @@ End
 		  d.Value("source") = f.Name
 		  pmFont.AddRowAt(pmFont.RowCount - 1, f.Name)
 		  pmFont.RowTagAt(pmFont.RowCount - 2) = d
+		  // Selecting the row from inside this event doesn't run it again: the file is loaded here
+		  mRelabeling = True
 		  pmFont.SelectedRowIndex = pmFont.RowCount - 2
+		  mRelabeling = False
+		  mPreviousFontRow = pmFont.RowCount - 2
+		  LoadFont(f, "", f.Name)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
