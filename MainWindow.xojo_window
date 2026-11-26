@@ -762,19 +762,6 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub AddFontRow(key As String, fileName As String, license As String, source As String)
-		  // A bundled font (Resources/Fonts), its name the text of key (Strings)
-		  pmFont.AddRow(T(key))
-		  Dim d As New Dictionary
-		  d.Value("key") = key
-		  d.Value("file") = fileName
-		  d.Value("license") = license
-		  d.Value("source") = source
-		  pmFont.RowTagAt(pmFont.LastAddedRowIndex) = d
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub AddBDFFont()
 		  // Add BDF font...: another BDF font's characters join the BDF font in use, for those it lacks (the first font
 		  // wins), e.g. Shinonome's JIS X 0201 half-width katakana with its JIS X 0208 kanji. The font's row keeps the
@@ -811,47 +798,16 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub BDFChanged()
-		  // The BDF font in use got more characters: the packs rendered before lack them
-		  mFontSource = mBDF.FileNames
-		  mPacks.RemoveAll
-		  mPreviewPack = Nil
-		  btnSave.Enabled = False
-		  ShowFontInfo
-		  UpdateSelection
-		  cvPreview.Refresh
+		Private Sub AddFontRow(key As String, fileName As String, license As String, source As String)
+		  // A bundled font (Resources/Fonts), its name the text of key (Strings)
+		  pmFont.AddRow(T(key))
+		  Dim d As New Dictionary
+		  d.Value("key") = key
+		  d.Value("file") = fileName
+		  d.Value("license") = license
+		  d.Value("source") = source
+		  pmFont.RowTagAt(pmFont.LastAddedRowIndex) = d
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub LoadExtraBDFs(d As Dictionary)
-		  // The BDF fonts added to a row's font (Add BDF font...), after it is loaded again
-		  If mBDF = Nil Or Not d.HasKey("extras") Then Return
-		  For Each path As String In d.Value("extras").StringValue.Split(Chr(10))
-		    Dim errorText As String
-		    Dim f As FolderItem
-		    Try
-		      f = New FolderItem(path, FolderItem.PathModes.Native)
-		    Catch e As RuntimeException
-		      f = Nil
-		    End Try
-		    If f = Nil Or Not f.Exists Or Not mBDF.Load(f, errorText) Then
-		      System.DebugLog("FontPackBuilder: can't add " + path + " " + errorText)
-		      SetStatus("status.addBDFFailed", "file", If(f <> Nil, f.Name, path))
-		    End If
-		  Next
-		  BDFChanged
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function OtherFontRow() As Integer
-		  // The font menu's Other font file... row (the one without a tag): chosen files go above it
-		  For row As Integer = 0 To pmFont.RowCount - 1
-		    If pmFont.RowTagAt(row) = Nil Then Return row
-		  Next
-		  Return pmFont.RowCount
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -885,6 +841,19 @@ End
 		  UpdateEdits
 		  UpdateSelection
 		  ShowStatus
+		  cvPreview.Refresh
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BDFChanged()
+		  // The BDF font in use got more characters: the packs rendered before lack them
+		  mFontSource = mBDF.FileNames
+		  mPacks.RemoveAll
+		  mPreviewPack = Nil
+		  btnSave.Enabled = False
+		  ShowFontInfo
+		  UpdateSelection
 		  cvPreview.Refresh
 		End Sub
 	#tag EndMethod
@@ -944,6 +913,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub LoadExtraBDFs(d As Dictionary)
+		  // The BDF fonts added to a row's font (Add BDF font...), after it is loaded again
+		  If mBDF = Nil Or Not d.HasKey("extras") Then Return
+		  For Each path As String In d.Value("extras").StringValue.Split(Chr(10))
+		    Dim errorText As String
+		    Dim f As FolderItem
+		    Try
+		      f = New FolderItem(path, FolderItem.PathModes.Native)
+		    Catch e As RuntimeException
+		      f = Nil
+		    End Try
+		    If f = Nil Or Not f.Exists Or Not mBDF.Load(f, errorText) Then
+		      System.DebugLog("FontPackBuilder: can't add " + path + " " + errorText)
+		      SetStatus("status.addBDFFailed", "file", If(f <> Nil, f.Name, path))
+		    End If
+		  Next
+		  BDFChanged
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub LoadFont(f As FolderItem, license As String, source As String)
 		  // Makes the font usable (CoreText) and takes its first face; a BDF bitmap font is read by BDFFont
 		  Dim faces() As String
@@ -986,6 +976,16 @@ End
 		  UpdateSelection
 		  cvPreview.Refresh
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function OtherFontRow() As Integer
+		  // The font menu's Other font file... row (the one without a tag): chosen files go above it
+		  For row As Integer = 0 To pmFont.RowCount - 1
+		    If pmFont.RowTagAt(row) = Nil Then Return row
+		  Next
+		  Return pmFont.RowCount
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

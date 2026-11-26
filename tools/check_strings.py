@@ -23,7 +23,7 @@ def code_keys():
             continue
         with open(os.path.join(ROOT, name), encoding="utf-8") as f:
             for lineno, line in enumerate(f, 1):
-                if line.lstrip().startswith("//") or "#tag" in line:
+                if line.lstrip().startswith("//") or "#tag" in line or "Declare " in line:  # Lib "libfoo.so.6"
                     continue
                 for key in KEY.findall(line):
                     if key not in NOT_KEYS and not key.endswith((".mfp", ".json", ".txt", ".otf", ".ttf")):

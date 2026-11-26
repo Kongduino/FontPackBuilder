@@ -1,6 +1,6 @@
 # FontPackBuilder
 
-A macOS and Windows app (Xojo) that builds **Meshtastic Font Packs** (`.mfp`): the glyphs of one font at one pixel size,
+A macOS, Windows and Linux app (Xojo) that builds **Meshtastic Font Packs** (`.mfp`): the glyphs of one font at one pixel size,
 for the characters a device's built-in font doesn't have (Chinese, Japanese, Korean, Cantonese...). The format, the
 firmware side and command-line tools are in [MeshtasticFontPacks](https://github.com/Kongduino/MeshtasticFontPacks).
 Firmware that installs and uses the packs, with Chinese stroke and Korean (나랏글) input, is in
@@ -22,7 +22,7 @@ Firmware that installs and uses the packs, with Chinese stroke and Korean (나�
 Glyphs are drawn with CoreText, anti-aliasing and font smoothing off, which matches FreeType's mono rendering (the
 Python generator's) pixel for pixel, but for a few accents that rise above the ascender line. On Windows, GDI draws them
 the same way (anti-aliasing off, the font's own glyph by its index), with the advances and the ascent taken from the
-font's tables, as CoreText reports them.
+font's tables, as CoreText reports them. On Linux, FreeType draws them in its mono mode, as the Python generator does.
 
 ## Screenshots
 
@@ -64,7 +64,7 @@ placeholders that differ).
 
 ## Next
 
-Project files (font, selection, edits), compressed transfers, Linux.
+Project files (font, selection, edits), compressed transfers.
 
 ## Credits
 
