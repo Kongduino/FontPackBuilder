@@ -58,19 +58,25 @@ Protected Class BDFFont
 	#tag Method, Flags = &h21
 		Private Function JIS0208WindowsAlias(code As Integer, cp As Integer) As Integer
 		  // The code point Windows (CP932) gives a JIS X 0208 code where it differs from JIS, e.g. U+FF5E for the wave
-		  // dash (U+301C): text typed on Windows and many phones uses these. -1 where they agree
-		  Dim j1 As Integer = Bitwise.ShiftRight(code, 8)
-		  Dim j2 As Integer = code And &hFF
-		  Dim s1 As Integer = Bitwise.ShiftRight(j1 + 1, 1) + If(j1 <= &h5E, &h70, &hB0)
-		  Dim s2 As Integer
-		  If (j1 And 1) = 1 Then
-		    s2 = j2 + &h1F
-		    If s2 >= &h7F Then s2 = s2 + 1
+		  // dash (U+301C): text typed on Windows and many phones uses these. -1 where they agree. A table, the six that
+		  // mkfontpack.py finds through Python's cp932: macOS's Windows-31J converter maps the minus sign differently
+		  Dim alias As Integer
+		  Select Case code
+		  Case &h2141
+		    alias = &hFF5E // wave dash U+301C
+		  Case &h2142
+		    alias = &h2225 // double vertical line U+2016
+		  Case &h215D
+		    alias = &hFF0D // minus sign U+2212
+		  Case &h2171
+		    alias = &hFFE0 // cent sign U+00A2
+		  Case &h2172
+		    alias = &hFFE1 // pound sign U+00A3
+		  Case &h224C
+		    alias = &hFFE2 // not sign U+00AC
 		  Else
-		    s2 = j2 + &h7E
-		  End If
-		  If mCP932 = Nil Then mCP932 = GetInternetTextEncoding("Windows-31J")
-		  Dim alias As Integer = Decoded(ChrB(s1) + ChrB(s2), mCP932)
+		    Return -1
+		  End Select
 		  If alias = cp Then Return -1
 		  Return alias
 		End Function
@@ -244,10 +250,6 @@ Protected Class BDFFont
 
 	#tag Property, Flags = &h21
 		Private mAscent As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mCP932 As TextEncoding
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
